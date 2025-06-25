@@ -128,7 +128,7 @@ class Monster:
         else:
             mon_data = f"{self.proper_name}  AC: {self.armor_class}  " \
                        f"({self.number_of_hd}d{self.hit_dice})"
-            #          f"HP: {self.hit_points}  # add this before number of hit_dice to show HP
+            #          f"HP: {self.hit_points}  # add this before number of hit die to show HP
         if self.undead:
             print(f"{mon_data} (UNDEAD)")
         else:

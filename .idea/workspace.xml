@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="edit typo in installation and running">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="cleaned up about.txt">
+      <change beforePath="$PROJECT_DIR$/text/about.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/about.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +136,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750861408225</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="cleaned up about.txt">
+      <option name="closed" value="true" />
+      <created>1750891587187</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1750891587187</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -157,6 +165,7 @@
     <MESSAGE value="commit edits to copyright" />
     <MESSAGE value="commit edits including removing showing monster hit points" />
     <MESSAGE value="edit typo in installation and running" />
-    <option name="LAST_COMMIT_MESSAGE" value="edit typo in installation and running" />
+    <MESSAGE value="cleaned up about.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaned up about.txt" />
   </component>
 </project>

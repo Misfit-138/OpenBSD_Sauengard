@@ -165,7 +165,7 @@ def unix_screen():
     same_line_print("The system is coming up.  ")
     sleep(1)
     same_line_print("Please wait. ")
-    spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD or something. consider removing.
+    spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD..
     # sleep(2)
     cls()
     same_line_print("Console Login: ")

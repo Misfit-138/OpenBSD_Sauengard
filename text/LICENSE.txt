@@ -1,4 +1,4 @@
-Sauengard Copyright 2022, 2023 by Jules Pitsker
+Sauengard Copyright 2022, 2023 2025 by Misfit-138
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:

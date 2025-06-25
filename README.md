@@ -28,8 +28,9 @@ pitsker@proton.me
 - Python v3. 
 - Download the files to a folder 
   
+## Run with:
 ```
-$ python3 ./path/to/main.py
+$ python3 /path/to/main.py
 ```
 ## License
 

@@ -24,24 +24,16 @@ pitsker@proton.me
 ## Installation:
 
 - Prerequisites: 
-- Windows: Python v3. import keyboard and winsound modules
-- GNU/Linux: Python v3. from termios import tcflush, TCIFLUSH
+- Python v3. 
 - Download the files to a folder 
-- On Microsoft Windows, you may simply click on the batch file: 
-```
-Sauengard.bat
-``` 
-- Or, run directly with python interpreter:
-```
-C:\ py /path/to/main.py
-```
-GNU/Linux:
+  
 ```
 $ python3 ./path/to/main.py
 ```
 ## License
 
-This source code is licensed under the Open RPG Creative License (ORC) found in the LICENSE file in the root directory of this source tree.
+This source code is licensed under the BSD 3-Clause License found in the LICENSE file
+in the root directory of this source tree.
 
 Copyright © 2022, 2023 Jules Pitsker 
 

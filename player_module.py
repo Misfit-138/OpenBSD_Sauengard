@@ -2,88 +2,6 @@
 # This source code is licensed under the license found in the
 # LICENSE.txt file in the root directory of this source tree.
 
-"""
-Sauengard Copyright 2022, 2023, JULES PITSKER  (pitsker@proton.me)
-
-O.R.C. NOTICE
-This product is licensed under the Open RPG Creative License (ORC) located at the Library of
-Congress and available online at various locations
-including https://downloads.paizo.com/ORC_License_FINAL.pdf and others.
-All WARRANTIES ARE DISCLAIMED AS SET FORTH THEREIN.
-
-ATTRIBUTION
-This product is original work except for the following sound/music released under the Creative Commons License:
-https://creativecommons.org/licenses/by/4.0/
-
-Main theme: "Soul's Departure" Royalty Free Music by Darren Curtis
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Blacksmith Theme: 'Viking Intro loop' by Alexander Nakarada
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Dungeon Themes: 'Dragon Quest', 'Dragon Song', 'Medieval Metal', 'Cinematic Celtic Metal', by Alexander Nakarada
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Chemist Theme: 'Might and Magic' by Alexander Nakarada
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Fieldenberg Theme: 'Tavern Loop 1' by Alexander Nakarada
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Boss battle theme: 'Dragon Castle' / Epic Orchestral Battle Music by Makai Symphony
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Tavern Theme: 'The Medieval Banquet' by Silverman Sound is under a Creative Commons license (CC BY 3.0)
-Music promoted by BreakingCopyright: http://bit.ly/Silvermansound_Medieval
-
-Pit theme: 'Epic 39' by Jules Pitsker
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-
-Undead king theme: Hall of the Mountain King by Kevin MacLeod http://incompetech.com
-Creative Commons Attribution License 4.0 International (CC BY 4.0)
-Free Download / Stream: https://bit.ly/hall-of-the-mountain-king
-Music promoted by Audio Library https://youtu.be/2RDX5sVEfs4
-
-PC Boot up sounds: Eirikr / Freesound.org
-Creative Commons Attribution License 3.0 (CC BY 3.0)
-
-Floppy Disk Insert Sound: Joseph Sardin (BigSoundBank.com)
-Creative Commons CC0 1.0 Universal (CC0 1.0)
-
-Floppy Disk Drive R/W Sounds: Dennis Johansson (MrAuralization / Freesound.org)
-Creative Commons Attribution License 3.0 (CC BY 3.0)
-
-Gong: juskiddink / Freesound.org
-Creative Commons Attribution License 3.0 (CC BY 3.0)
-
-Clacky Keyboard: Denis McDonald (denismcdonald / Freesound.org)
-Creative Commons Attribution License 3.0 (CC BY 3.0)
-
-Final Victory Theme: 'Epic Victory Music' Royalty Free Instrumental Music by MUSIC4VIDEO
-https://www.youtube.com/watch?v=5JeU0pYk0dg
-
-Queen Confrontation Theme: "Shadow"
-Album: "The Net" 2020 Argsound
-Author: Artem Grebenshchikov
-Link: https://youtu.be/k-DJUohjcKo
-Free for Any non-commercial use
-
-If you use my EXPRESSLY DESIGNATED LICENSED MATERIAL in your own published works, please credit me as follows:
-Sauengard, Copyright 2022,2023, by Jules Pitsker.
-
-RESERVED MATERIAL
-Reserved Material elements in this product include, but may not be limited to:
-The ABOUT section,
-All elements designated as Reserved Material under the ORC License.
-
-EXPRESSLY DESIGNATED LICENSED MATERIAL
-The following elements are owned by the Licensor and would otherwise
-constitute Reserved Material and are hereby designated as LICENSED MATERIAL:
-Python code, ASCII Artwork, Tinbar, The Northern Kingdom and Northern Library, the Realm of Sauengard and associated
-characters,locations, lore, and titles including, but not limited to Deaf One, Wicked Queen Jannbrielle, Vozzbozz,
-Si'Kira, and Tor'bron.
-"""
-
 import math
 import pickle
 import random
@@ -95,12 +13,8 @@ from dungeons import dungeon_dict
 from monster_module import monster_dict, king_boss_list, undead_prophet_list, WickedQueenJannbrielle
 from pathlib import Path
 import itertools
+from termios import tcflush, TCIFLUSH
 
-if os.name == 'nt':
-    import winsound
-    import keyboard
-if os.name == 'posix':
-    from termios import tcflush, TCIFLUSH
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
@@ -108,44 +22,22 @@ if os.name == 'posix':
 # seq = [1, 2, 3]
 # foo(*seq)
 
-'''DIFFICULTY CLASSES (Misfit’S REMIX)
-Task Difficulty	 DC
-Very Easy	     5
-Easy	         8
-Medium	         10
-Tricky	         12
-Hard	         15
-Very hard	     20
-Incredibly hard	 25
-Why bother?	     30
-'''
-
 
 def ibm_startup_meta_function():
-    pc_powerup()
-    sleep(5)
-    floppy_insert_and_load()
+    # pc_powerup()
+    # sleep(5)
+    # floppy_insert_and_load()
     ibm_dos_screen()
 
 
 def os_check():
     cls()
     print("Welcome!\nPlease ensure terminal is in full screen mode.")
-    print()
-    if os.name == 'nt':
-        random_startup_list = [ibm_startup_meta_function, commodore_pet_screen]
-        random_startup = random.choice(random_startup_list)
-        random_startup()
-        initial_loading_screen()
 
-    else:
-        teletype(f"Operating System identifies as: {os.name.title()}")
-        teletype(f"Sauengard should be stable, with the following 2 limitations:\n"
-                 f"1. Sound support is not currently available.\n"
-                 f"2. The 'keyboard' module requires root permissions on GNU/Linux, and I could not get it to work\n"
-                 f"reliably. Therefore, users will be unable to skip through teletype-style messages.\n\n")
-        pause()
-        unix_screen()
+    random_startup_list = [ibm_startup_meta_function, commodore_pet_screen, unix_screen]
+    random_startup = random.choice(random_startup_list)
+    random_startup()
+    initial_loading_screen()
 
 
 def commodore_pet_screen():
@@ -202,7 +94,7 @@ def ibm_dos_screen():
     same_line_print("Enter new date (mm-dd-yy): ")
     sleep(.5)
     clacky_keyboard_short2()
-    same_line_teletype("5-27-1983\n")
+    same_line_teletype("5-27-1984\n")
     sleep(.25)
     stop_sound()
     print("Current time is 0:00:25:36")
@@ -273,7 +165,7 @@ def unix_screen():
     same_line_print("The system is coming up.  ")
     sleep(1)
     same_line_print("Please wait. ")
-    spinner(500)  # this is anachronistic, but I thought it looked cool, like openBSD or something. consider removing.
+    spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD or something. consider removing.
     # sleep(2)
     cls()
     same_line_print("Console Login: ")
@@ -353,7 +245,7 @@ def quit_game():
 
 def are_you_sure():
     while True:
-        confirm = input("Are you sure (y/n)? ").lower()
+        confirm = input("Are you sure (y/N)? ").lower()
 
         if confirm == 'y':
             return True
@@ -375,19 +267,20 @@ def spinner(number_of_spins):
 def escape_key_interrupt_teletype(message):
     # I am proud of this little snippet I figured out,
     # but unfortunately, it does not work reliably on *nix due to permissions problems with the 'keyboard' module.
-    if os.name == 'nt':
+    return False
+    #if os.name == 'nt':
 
-        if keyboard.is_pressed('Esc'):  # Skip through teletype message straight to printing, if escape is pressed:
-            cls()
-            print()  # skip a line, just like teletype(), so printed text will line up perfectly with teletyped text
-            print(message)
-            return True
+    #    if keyboard.is_pressed('Esc'):  # Skip through teletype message straight to printing, if escape is pressed:
+    #        cls()
+    #        print()  # skip a line, just like teletype(), so printed text will line up perfectly with teletyped text
+    #        print(message)
+    #        return True
 
-        else:
-            return False
+     #   else:
+     #       return False
 
-    else:
-        return False
+    #else:
+    #    return False
 
 
 def same_line_print(string):
@@ -406,7 +299,7 @@ def same_line_teletype(string):
 def dot_dot_dot(number_of_dots):
     # print a series of specified periods '.' after same_line_print(string)
     for i in range(number_of_dots):
-        sleep(.2)
+        sleep(.1)
         same_line_print(".")
 
 
@@ -416,11 +309,11 @@ def teletype(message):
     for each_character in message:
         sys.stdout.write(each_character)
         sys.stdout.flush()
-        sleep(0.0050)  # 0.0065, 0.01 all seem good
+        sleep(0.00001)  # 0.0065, 0.01 all seem good
         if escape_key_interrupt_teletype(message):
             return
 
-    sleep(0.1)
+    sleep(0.01)
     return
 
 
@@ -458,11 +351,10 @@ def game_splash():
     while True:
         cls()
         print_txt_file('splash_art.txt')
-        print("                                   "
-              "W  E  L  C  O  M  E    T  O    S  A  U  E  N  G  A  R  D.\n")
-        print(f"                                         "
-              f"   © Copyright 2022, 2023, by Jules Pitsker")
-        choice = input(f"                               "
+        print("                     "
+              "W  E  L  C  O  M  E    T O    S  A  U  E  N  G  A  R  D.")
+        print(f"                            Copyright 2022, 2023, by Jules Pitsker")
+        choice = input(f"               "
                        f"(Quit) to Desktop  (A)bout  (T)ips  (C)redits  "
                        f"(L)icense  (B)egin ").lower()
 
@@ -476,10 +368,6 @@ def game_splash():
 
         elif choice == 'c':
             print_txt_file('credits.txt')
-            pause()
-            print_txt_file('credits2.txt')
-            pause()
-            print_txt_file('credits3.txt')
             pause()
 
         elif choice == 'l':
@@ -530,11 +418,11 @@ def pause():
 
 def cls():
     # for cross-platform compatibility
-    if os.name == 'nt':
-        os.system('cls')
+    #if os.name == 'nt':
+    #    os.system('cls')
 
-    else:
-        os.system('clear')
+    #else:
+    os.system('clear')
 
     return
 
@@ -612,7 +500,7 @@ def character_generator():
             sleep(.25)
             continue
 
-        confirm_player_name = input(f"Player name is {player_name}. Is this ok (y/n)? ").lower()
+        confirm_player_name = input(f"Player name is {player_name}. Is this ok (y/N)? ").lower()
 
         if confirm_player_name == 'y':
             break
@@ -695,7 +583,7 @@ def game_start():
         cls()
         player_1 = ""  # to get rid of undefined warning
 
-        intro_or_not = input("View Introduction? (y/n) ").lower()
+        intro_or_not = input("View Introduction? (y/N) ").lower()
         if intro_or_not == 'y':
             teletype_txt_file('introduction.txt')
             pause()
@@ -742,7 +630,7 @@ def game_start():
                     player_1 = character_generator()
                     player_1.hud()
                     # print(f"Dungeon Key {player_1.dungeon_key}")
-                    accept_stats = input(f"Accept character and continue? (y/n)? ").lower()
+                    accept_stats = input(f"Accept character and continue? (y/N)? ").lower()
 
                 if accept_stats == "y":
                     # player_1.dungeon_key = 1  # unneeded
@@ -791,42 +679,45 @@ def augmentation_intro():
 
 
 def stop_sound():
-    winsound.PlaySound(None, 0)
+    pass
+    #winsound.PlaySound(None, 0)
 
 
 def sound_player(sound_file):
     # a sound player function which simply plays sound_file asynchronously
-    if os.name == 'nt':
-        p = ""
-        try:
-            sound_folder = Path(__file__).with_name("sound")
-            p = sound_folder / sound_file
-            # p = Path(__file__).with_name(sound_file)
-            with p.open('rb') as sound:
-                if sound.readable():
-                    winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_ASYNC)
-        except FileNotFoundError:
+    pass
+    #if os.name == 'nt':
+    #    p = ""
+    #    try:
+    #        sound_folder = Path(__file__).with_name("sound")
+    #        p = sound_folder / sound_file
+    #        # p = Path(__file__).with_name(sound_file)
+    #        with p.open('rb') as sound:
+    #            if sound.readable():
+    #                winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_ASYNC)
+    #    except FileNotFoundError:
             # pass  # restore after testing
-            print(f"{p} not found.")  # remove after testing
-            pause()  # remove after testing
+    #        print(f"{p} not found.")  # remove after testing
+    #        pause()  # remove after testing
 
 
 def sound_player_loop(sound_file):
     # a sound player function which plays sound_file asynchronously on a continuous loop
-    if os.name == 'nt':
-        p = ""
-        try:
-            sound_folder = Path(__file__).with_name("sound")
-            p = sound_folder / sound_file
-            # print(p)
-            # p = Path(__file__).with_name(sound_file)
-            with p.open('rb') as sound_loop:
-                if sound_loop.readable():
-                    winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_LOOP | winsound.SND_ASYNC)
-        except FileNotFoundError:
+    pass
+    #if os.name == 'nt':
+    #    p = ""
+    #    try:
+    #        sound_folder = Path(__file__).with_name("sound")
+    #        p = sound_folder / sound_file
+    #        # print(p)
+    #        # p = Path(__file__).with_name(sound_file)
+    #        with p.open('rb') as sound_loop:
+    #            if sound_loop.readable():
+    #                winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_LOOP | winsound.SND_ASYNC)
+    #    except FileNotFoundError:
             # pass  # restore after testing
-            print(f"{p} not found.")  # remove after testing
-            pause()  # remove after testing
+    #        print(f"{p} not found.")  # remove after testing
+    #        pause()  # remove after testing
 
 
 def gong():
@@ -1909,6 +1800,7 @@ class Player:
         # dot_dot_dot(15)
 
         with p.open('wb') as character_filename:  # 'wb'
+            # noinspection PyTypeChecker
             pickle.dump(self, character_filename)
             print(f"Well done, {self.name}.\n")
             sleep(2)
@@ -1964,6 +1856,7 @@ class Player:
         random_floppy_rw_sound()
         dot_dot_dot(15)
         with p.open('wb') as character_filename:  # 'wb'
+            # noinspection PyTypeChecker
             pickle.dump(self, character_filename)
             same_line_print(f"{self.name} saved.\n")
             sleep(2)
@@ -2593,6 +2486,7 @@ class Player:
     # BATTLE AND PROXIMITY TO MONSTER OCCURRENCES
 
     def try_again_sub_function(self):
+
         while True:
             cls()
             try_again = input("Do you wish to play again (y/n)? ").lower()
@@ -7658,7 +7552,15 @@ class Player:
         # meeting with vozzbozz and introduction to tor'bron
         teletype_txt_file('hint_event_1.txt')
         pause()
+        cls()
 
+        # print picture of vozzbozz
+        print_txt_file('vozzbozz.text')
+        pause()
+        cls()
+
+        teletype_txt_file('hint_event_1b.txt')
+        pause()
         cls()
         teletype(f"{self.name},\nThe guardian of {self.dungeon.name} has, in its possession, an ornate dagger "
                  f"of very fine craftsmanship.\nIt is imperative you retrieve it. Return here with it so that "
@@ -7673,6 +7575,11 @@ class Player:
               f"her chin in that general direction.\nAt the very same booth as last time, sits the hulking barbarian, "
               f"Tor'bron.")
         sleep(2)
+        pause()
+        cls()
+        print_txt_file('torbron.txt')
+        pause()
+        cls()
 
         if self.sikira_ally:
             print(f"Both you and Si'Kira turn to behold him. With a curt slap on the back, Si'Kira says, 'Good "
@@ -7686,13 +7593,17 @@ class Player:
         cls()
         teletype(f"'Well! {self.name}!', he bellows in his booming voice. 'Sit!' Something in his dour demeanor\n"
                  f"tells you it is not an invitation, but an order. You marvel at the size and strength of the man.\n"
-                 f"His jet black hair lays long on his head, and covers his body in a wiry patchwork.\n"
-                 f"Long sideburns flank a strong jawbone, and his deep-set amber eyes burn with gripping intensity.\n"
+                 f"His jet black hair is slicked back on his head, and covers his body in a wiry patchwork.\n"
+                 f"His long beard a strong jawbone, and his deep-set amber eyes burn with gripping intensity.\n"
                  f"'And where is it? Do you have it?', he asks, his tone tense and distrustful.\n"
                  f"You carefully retrieve the dagger and pass it to him across the table. Roughly and without "
                  f"regard,\n"
                  f"he swipes it from you, yanks it from its sheath and launches it across the room, over the heads\n"
                  f"of all the patrons on this side of the bar, until it abruptly lodges in the wall with a bang.")
+        pause()
+        cls()
+
+
         if len(self.vanquished_foes):
             vanquished_foes = convert_list_to_string_with_commas_only(self.vanquished_foes)
             teletype(f"'The slayer of {vanquished_foes}...\n...and others besides!'\n")
@@ -7722,6 +7633,7 @@ class Player:
         teletype_txt_file('hint_event_2.txt')
         pause()
         cls()
+
         self.boss_hint_2_event = True
         return
 
@@ -7752,6 +7664,9 @@ class Player:
               f"The dwarf promptly reaches his\n"
               f"hand across the table and takes yours with a firm, brief grip and a nod.\n"
               f"'Well met', he says, sincerely, in an alarmingly deep voice.")
+        pause()
+        cls()
+        print_txt_file('magnus.txt')
         pause()
         cls()
         # another meeting, get hints
@@ -9046,7 +8961,7 @@ class Player:
             if read_roll + self.wisdom_modifier > difficulty_class:  # wisdom to recognize language
                 print(f"You recognize the ancient language!")
                 sleep(1)
-                translate = input(f"Do you want to attempt to translate it into the common tongue? (y/n)? ").lower()
+                translate = input(f"Do you want to attempt to translate it into the common tongue? (y/N)? ").lower()
                 if translate == 'y':
                     difficulty_class = 8
                     translate_roll = dice_roll(1, 20)
@@ -9217,7 +9132,7 @@ class Player:
         if (pit_outcome + self.dexterity_modifier + self.intelligence_modifier) > pit_difficulty_class:
             print(f"It appears to be about 3 fathoms deep.")
             sleep(1)
-            descend_or_not = input(f"Do you wish to descend (y/n)? ").lower()
+            descend_or_not = input(f"Do you wish to descend (y/N)? ").lower()
             if descend_or_not == 'y':
                 self.in_a_pit = True
                 print(f"Retrieving the rope from your belt, you deftly repel down the slick, "
@@ -9451,20 +9366,23 @@ class Player:
             self.discovered_interactives.append(deaf_one_discovery)
             self.hud()
             teletype(f"From the {random_orientation}, a seemingly autonomous, marshy, and knee-deep fog stretches "
-                     f"toward you from out of the mire\nas a dark, humanoid silhouette begins to emerge. "
+                     f"toward you from out of the mire\nas a dark humanoid silhouette begins to emerge. "
                      f"You behold his elongated, troll-like nose and ears, and deep-set eyes\nshrouded in black, "
                      f"the whites of which shine with a luminescence as brilliant as any moon you have ever beheld. "
                      f"\nHis garb is a mere patchwork of cloth strip wrappings, as though he were once "
                      f"mummified. His exposed portions\nof flesh appear gray and lifeless, with arms covered in "
-                     f"tattoo markings, and his long, dark hair is a tangled mess.\n")
+                     f"tattoo markings, and his long, dark hair drapes down\npast his shoulders.\n")
+            pause()
+            cls()
+            print_txt_file("deafone.txt")
             pause()
             self.hud()
             teletype(f"Drawing your {self.wielded_weapon.name}, you attack!\n")
             pause()
             self.hud()
-            teletype(f"Your weapon strikes his left arm and splinters into shards of white-hot steel! Unaffected and "
-                     f"dismissive, he opens his palm,\nand your {self.wielded_weapon.name} re-appears, completely "
-                     f"restored! He hands it to you with a nod.\n")
+            teletype(f"Your weapon strikes his left arm and splinters into shards of white-hot steel! \n"
+                     f"Unaffected and dismissive, he opens his palm, and your {self.wielded_weapon.name} \n"
+                     f"re-appears, completely restored! He hands it to you with a nod.\n")
             pause()
             self.hud()
             teletype(f"'Be at ease, {self.name}.', he says in a smooth, even tone. 'I am not an enemy, and I cannot "
@@ -9474,31 +9392,31 @@ class Player:
                      f"in vain..'\nStill on your guard, yet feeling powerless in contrast to his obvious "
                      f"invulnerability, you begin to explain your quest.\n'Yes, I know why *you* are here.', "
                      f"he interrupts, plainly. "
-                     f"'*I* am here', he pauses, 'to guide you. The exit of this dungeon is guarded\nby an enemy whom "
-                     f"you are not yet prepared to face.'\n")
+                     f"'*I* am here', he pauses, 'to guide you. \nThe exit of this dungeon is guarded by an enemy whom "
+                     f"you are not yet \nprepared to face.'\n")
             pause()
             self.hud()
             teletype(f"Thinking back to your training, you recall Gorndam's words and warnings about physical power "
-                     f"and its limitations in the face\nof mighty foes.\n'Your teacher was correct', Deaf one states "
-                     f"with inexplicable context and knowledge, 'you must pursue and hone your innane\n"
+                     f"and its limitations in\nthe face of mighty foes.\n'Your teacher was correct', Deaf one states "
+                     f"with inexplicable context and knowledge, 'you must pursue and hone \nyour innane "
                      f"understanding of the Quantum nature of our world.'\n")
             pause()
             self.hud()
             teletype(f"'Is it not too late for training, now that I am here?', you ask.\nPatiently, he responds, "
-                     f"'I will ask you to simply ponder this question. Ask yourself, is Uncertainty essentially\n"
+                     f"'I will ask you to simply ponder this question.' \n'Ask yourself, is Uncertainty essentially"
                      f"ontological, or, epistemological?'\n'Ontological..?', you begin.\n'Yes, is "
-                     f"Quantum Uncertainty simply a feature of our reality, rather than a reflection\nof the "
-                     f"limitations of our knowledge, or is it epistemological; fundamentally due to our own "
+                     f"Quantum Uncertainty simply a feature of our reality, \nrather than a reflection of the "
+                     f"limitations of our knowledge, or, is it epistemological; \nfundamentally due to our own "
                      f"Uncertainty of Quantum Nature?'\n")
             pause()
             self.hud()
             teletype(f"'That is quite a concept to ponder..', you respond, rather incredulously.\n"
-                     f"'Indeed.', he says, 'This question is at the heart of your advancement. It is the concept "
-                     f"which will either\nfacilitate or prevent your comprehension of Weirdness.'\n'It is the principle"
-                     f" which must be embraced, and never understood.', he concludes."
+                     f"'Indeed.', he says, 'This question is at the heart of your advancement.'\nIt is the concept "
+                     f"which will either facilitate or prevent your comprehension of Weirdness.'\n"
+                     f"'It is the principle which must be embraced, and never understood.', he concludes."
                      f"\nBefore you can respond with the myriad of "
-                     f"questions in your mind, the marshy fog envelopes Deaf One,\nand his form becomes "
-                     f"obscured with its whisperings until he is simply gone. All that remains is the cold, "
+                     f"questions in your mind, \nthe marshy fog envelopes Deaf One, and his form becomes "
+                     f"obscured with\nits whisperings until he is simply gone. \nAll that remains is the cold, "
                      f"creeping mist.\n")
             pause()
             if self.hit_points < self.maximum_hit_points:

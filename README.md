@@ -1,4 +1,4 @@
-SAUENGARD © 2022, 2023, 2025 by Misfit-138  (pitsker@proton.me)
+SAUENGARD © 2022, 2023, 2025 by J.P.
 
 ![splash_](https://user-images.githubusercontent.com/105970436/213262250-f591f961-3fd7-4646-9173-67d8a9893687.jpg)
 

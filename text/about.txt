@@ -19,8 +19,8 @@ Sauengard is inspired by games from the early microcomputer era, specifically, g
 Commodore 64 and IBM PC, such as Telengard (1983), (The name Sauengard is, of course, inspired by Telengard.),
 which was based on an earlier game called 'DND' (uppercase), which was ported from an earlier game called
 'dnd' (lowercase). For more: http://www.armory.com/~dlp/dnd1.html
-The dungeon loot, combat systems and interactives are all custom but are also influenced by Telengard,
-(though a bit more sophisticated), but also draw from other fantasies, free table-top RPGs, and perhaps most
+Even though the dungeon loot, combat systems and interactives are all custom, they are reminiscent of Telengard,
+(albeit a bit more sophisticated), but also draw from other fantasies, free table-top RPGs, and perhaps most
 affectionately, early electronic board games.
 Most of the monsters are inspired by the ubiquitous fantasy varieties, some have been created from imagination,
 but all have been customized to strike a balance between challenging and fun. I have tried to include as many of the

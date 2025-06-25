@@ -9403,7 +9403,7 @@ class Player:
             pause()
             self.hud()
             teletype(f"'Is it not too late for training, now that I am here?', you ask.\nPatiently, he responds, "
-                     f"'I will ask you to simply ponder this question.' \n'Ask yourself, is Uncertainty essentially"
+                     f"'I will ask you to simply ponder this question.' \n'Ask yourself, is Uncertainty essentially "
                      f"ontological, or, epistemological?'\n'Ontological..?', you begin.\n'Yes, is "
                      f"Quantum Uncertainty simply a feature of our reality, \nrather than a reflection of the "
                      f"limitations of our knowledge, or, is it epistemological; \nfundamentally due to our own "

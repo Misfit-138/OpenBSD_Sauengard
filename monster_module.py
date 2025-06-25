@@ -123,10 +123,12 @@ class Monster:
     def monster_data(self):
         if self.proper_name == "None":
             mon_data = f"{self.name}  Challenge Lvl: {self.level}  AC: {self.armor_class}  " \
-                       f"HP: {self.hit_points}  ({self.number_of_hd}d{self.hit_dice})"
+                       f"({self.number_of_hd}d{self.hit_dice})"
+            #          f"HP: {self.hit_points}  # add this before number of hd to show HP
         else:
             mon_data = f"{self.proper_name}  AC: {self.armor_class}  " \
-                       f"HP: {self.hit_points}  ({self.number_of_hd}d{self.hit_dice})"
+                       f"({self.number_of_hd}d{self.hit_dice})"
+            #          f"HP: {self.hit_points}  # add this before number of hit_dice to show HP
         if self.undead:
             print(f"{mon_data} (UNDEAD)")
         else:

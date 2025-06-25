@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="commit1">
-      <change beforePath="$PROJECT_DIR$/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/LICENSE.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/about.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/about.txt" afterDir="false" />
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="commit edits to copyright">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/monster_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/monster_module.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +194,31 @@
       <option name="project" value="LOCAL" />
       <updated>1750858254487</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="commit edits to licenses and ABOUT">
+      <option name="closed" value="true" />
+      <created>1750858686453</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1750858686453</updated>
+    </task>
+    <task id="LOCAL-00005" summary="commit edits to readme">
+      <option name="closed" value="true" />
+      <created>1750858910285</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1750858910285</updated>
+    </task>
+    <task id="LOCAL-00006" summary="commit edits to copyright">
+      <option name="closed" value="true" />
+      <created>1750859459311</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1750859459311</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -210,6 +234,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit1" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit1" />
+    <MESSAGE value="commit edits to licenses and ABOUT" />
+    <MESSAGE value="commit edits to readme" />
+    <MESSAGE value="commit edits to copyright" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit edits to copyright" />
   </component>
 </project>

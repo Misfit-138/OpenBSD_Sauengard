@@ -36,6 +36,4 @@ $ python3 ./path/to/main.py
 This source code is licensed under the BSD 3-Clause License found in the LICENSE file
 in the root directory of this source tree.
 
-Copyright © 2022, 2023, 2025 Misfit-138
-
-pitsker@proton.me
+Copyright © 2022, 2023, 2025

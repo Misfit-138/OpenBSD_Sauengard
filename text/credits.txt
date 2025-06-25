@@ -1,0 +1,13 @@
+Sauengard Copyright 2022, 2023 by Jules Pitsker
+Please see the LICENSE.txt in the program source directory, or choose the (L)icense option from the main menu.
+Concept, coding, creation and play testing: Jules Pitsker
+
+Thanks to the following STACK OVERFLOW members:
+The Spider, Anentropic, The Thonnu and Optimal: for helping me get my footing during my first days of learning python
+Yarik0urWorld: for help with python list syntax
+Angus Nicolson: for self.__dict__ code snippet and explanation
+Liju and snakecharmerb: for explanation of hashable objects
+Pawel Pietraszko: for assistance with initializing new object instances every time player gets new item
+triplee: for assistance with Path syntax
+
+Thanks to @LearntoCodeGCSE for the 2D array video.

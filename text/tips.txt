@@ -1,0 +1,40 @@
+The Town of Fieldenberg:
+The gateway to the Sauengard Dungeon. Here, you will find a tavern, a blacksmith and a quantum chemist. Quantum items,
+armor, and weapons may be purchased and sold for gold. Visiting the tavern allows for rest, which heals wounds and
+recovers quantum energy (for a small fee). The tavern is also a local gathering place where you will participate in
+events which will be triggered by your progress in the dungeon.
+Visit often, and remember to save your character to disk!
+
+Dungeon Navigation:
+W-A-S-D is used for North, South, East, and West. Also, if in wider-open areas, compound movements may be used;
+NE, NW, SE, SW. Pay attention to the descriptions of the spaces you navigate to! Use the (L)ook function if you are
+interrupted by an encounter with a monster. You may want to keep track of your progress throughout the dungeons
+with graph paper.
+
+MAGIC?? WHAT MAGIC?
+It has often, and quite accurately, been said that yesterdays 'magic' is nothing more than today's technology. While it
+is quite true that there is, by the very quantum nature of the universe we live in, an infinitesimally small,
+(but nonzero) chance that you could actually walk through a wall of solid rock, (as if 'magically'), if you try enough
+times, I do not recommend you attempt to do so.
+The world of Sauengard has no 'magic', per se. Instead, it has been replaced by 'Quantum Weirdness'. A person using
+such 'forces' and 'energies' is called a 'Quantum Manipulator' and, may eventually become a Quantum Mentor or even a
+Quantum Master. Quantum feats, or, 'effects' become possible through one's 'innate knowledge and understanding' of
+Quantum Nature, gleaned through experience.
+Re-animated skeletons, storms of lightning, and the healing of flesh, all become possible, based on the actual
+impossibly small, but nonzero chances of such occurrences in our world, by one's level of experience in this
+'Weird Art'. Harnessing such effects are critical to success in the dungeons, and most require substantial Wisdom
+to master, though a few require Intelligence as well.
+
+A Paladin? A Fighter? A 'Quantum Manipulator'? What am I?
+
+Sauengard allows players access to a set pool of stats from which ability stats may be customized. This system
+allows for a reasonable compromise between what is fair, possible, and fun, when creating a player character. It is
+the player who will ultimately decide how to build and level up their character, allowing for great customization and
+enjoyment. At the beginning of the game, your homeland, friends and culture are destroyed. It is up to you to build
+an optimal character in order to overcome the challenges ahead. Will you choose a tank-like fighter, relying heavily
+on your melee skills, or, opt for a more Quantum-Centric Manipulator, or, a balanced compromise? Make no mistake,
+success relies heavily on Quantum Manipulation as well as physical attacks. Certain monsters will be resistent or immune
+to Quantum effects, so do not underestimate the usefulness of steel! At levels 4, 6, 8, 10, 12, 14, 16, and 19, you will
+have access to an ability augmentation system, which facilitates increasing ability stats according to your preferences,
+for customizing and improving your character even further.
+

@@ -1,0 +1,23 @@
+Sauengard Copyright 2022, 2023, JULES PITSKER  (pitsker@proton.me)
+
+O.R.C. NOTICE
+This product is licensed under the Open RPG Creative License (ORC) located at the Library of
+Congress and available online at various locations
+including https://downloads.paizo.com/ORC_License_FINAL.pdf and others.
+All WARRANTIES ARE DISCLAIMED AS SET FORTH THEREIN.
+
+If you use my EXPRESSLY DESIGNATED LICENSED MATERIAL in your own published works, please credit me as follows:
+Sauengard, Copyright 2022,2023, by Jules Pitsker.
+
+RESERVED MATERIAL
+Reserved Material elements in this product include, but may not be limited to:
+The ABOUT section,
+All elements designated as Reserved Material under the ORC License.
+
+EXPRESSLY DESIGNATED LICENSED MATERIAL
+The following elements are owned by the Licensor and would otherwise
+constitute Reserved Material and are hereby designated as LICENSED MATERIAL:
+Python code, ASCII Artwork, Tinbar, The Northern Kingdom and Northern Library, the Realm of Sauengard and associated
+characters, locations, lore, and titles including, but not limited to Deaf One, Wicked Queen Jannbrielle, Vozzbozz,
+Si'Kira, and Tor'bron.
+

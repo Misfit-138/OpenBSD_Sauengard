@@ -4,24 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE.txt" afterDir="false" />
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="commit1">
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dungeons.py" beforeDir="false" afterPath="$PROJECT_DIR$/dungeons.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/monster_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/monster_module.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/player_module.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/LICENSE.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/deafone.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/deafone.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/grim_reaper.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/grim_reaper.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/hint_event_1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/hint_event_1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/hint_event_1b.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/hint_event_1b.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/queen_splash.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/queen_splash.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/sikira.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/sikira.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/splash_art.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/splash_art.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/text/vozzbozz.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/vozzbozz.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,6 +168,23 @@
       <option name="presentableId" value="Default" />
       <updated>1750246124735</updated>
     </task>
+    <task id="LOCAL-00001" summary="commit1">
+      <option name="closed" value="true" />
+      <created>1750857487827</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1750857487827</updated>
+    </task>
+    <task id="LOCAL-00002" summary="commit1">
+      <option name="closed" value="true" />
+      <created>1750857514200</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1750857514200</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -196,5 +197,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="commit1" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit1" />
   </component>
 </project>

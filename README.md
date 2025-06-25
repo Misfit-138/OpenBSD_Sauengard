@@ -1,4 +1,4 @@
-SAUENGARD © 2022 by JULES PITSKER  (pitsker@proton.me)
+SAUENGARD © 2022, 2023, 2025 by Misfit-138  (pitsker@proton.me)
 
 ![splash_](https://user-images.githubusercontent.com/105970436/213262250-f591f961-3fd7-4646-9173-67d8a9893687.jpg)
 
@@ -10,15 +10,16 @@ Telengard by Daniel Lawrence, as well as Milton Bradley's
 brilliant Dark Tower tabletop electronic board game.
 It is a fun and immersive RPG with relatively sophisticated 
 battle system, great loot and inventory, customizable character
-creation, an epic quest, and leveling. This version features evocative
-background scores as well as mechanical computer sounds like keyboards and
-floppy drives.
+creation, an epic quest, and leveling. It also features immersive atmospherics, 
+>and ASCII artwork. Sauengard runs in the console, or within a virtual console.
 
 ## Development:
 
-- Currently built on/for Windows, with sound. GNU/Linux should work,
-but without sound. Anyone willing to help with a GNU/Linux sound port is welcome.
-It should be quite simple. Please contact me at: 
+- I originally added background music licensed under the Creative Commons
+- license, but had difficulty with the sound system on POSIX systems.
+- Anyone willing to help with a sound port is welcome. 
+- It should be quite simple for anyone with basic Python knowledge. 
+- Please contact me at: 
 pitsker@proton.me
 
 ## Installation:
@@ -35,6 +36,6 @@ $ python3 ./path/to/main.py
 This source code is licensed under the BSD 3-Clause License found in the LICENSE file
 in the root directory of this source tree.
 
-Copyright © 2022, 2023 Jules Pitsker 
+Copyright © 2022, 2023, 2025 Misfit-138
 
 pitsker@proton.me

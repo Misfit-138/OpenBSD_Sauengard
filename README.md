@@ -16,10 +16,10 @@ creation, an epic quest, and leveling. It also features immersive atmospherics,
 ## Development:
 
 - I originally added background music licensed under the Creative Commons
-- license, but had difficulty with the sound system on POSIX systems.
-- Anyone willing to help with a sound port is welcome. 
-- It should be quite simple for anyone with basic Python knowledge. 
-- Please contact me at: 
+license, but had difficulty with the sound system on POSIX systems.
+Anyone willing to help with a sound port is welcome. 
+It should be quite simple for anyone with basic Python knowledge. 
+Please contact me at: 
 pitsker@proton.me
 
 ## Installation:

@@ -461,7 +461,7 @@ def convert_list_to_string_with_and(list1):
 # def compare():  # unused function?
 #    lambda x, y: collections.Counter(x) == collections.Counter(y)
 
-
+"""
 def pause():
     # for cross-platform compatibility, I have tried to make this as best I can.
     # MS Windows users will have a slight convenience in the ability to hit any key,
@@ -474,7 +474,40 @@ def pause():
         input("Press [ENTER] to continue . . . ")
 
     return
+"""
 
+def pause():
+    """Pause execution until the user presses any key (OpenBSD/Linux/macOS)."""
+    if os.name == 'nt':
+        os.system('pause')
+    else:
+        fd = sys.stdin.fileno()
+
+        # Flush stdin to prevent buffered input from triggering immediately
+        try:
+            termios.tcflush(fd, termios.TCIFLUSH)
+        except Exception:
+            pass
+
+        print("Press any key to continue . . . ", end='', flush=True)
+
+        # Save current terminal settings
+        old_settings = termios.tcgetattr(fd)
+        try:
+            # Switch terminal to raw mode to read a single character immediately
+            tty.setraw(fd)
+
+            # Wait until a key is available
+            while True:
+                rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+                if rlist:
+                    sys.stdin.read(1)  # read one character
+                    break
+        finally:
+            # Always restore terminal settings
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        print()  # move to next line after keypress
 
 def cls():
     # for cross-platform compatibility

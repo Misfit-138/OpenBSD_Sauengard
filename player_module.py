@@ -32,26 +32,17 @@ _sound_stop_event = threading.Event()
 # seq = [1, 2, 3]
 # foo(*seq)
 
-
-def ibm_startup_meta_function():
-    # pc_powerup()
-    # sleep(5)
-    # floppy_insert_and_load()
-    ibm_dos_screen()
-
-
 def os_check():
     cls()
     print("Welcome!\nPlease ensure terminal is in full screen mode.")
-
-    random_startup_list = [ibm_startup_meta_function, commodore_pet_screen, unix_screen]
+    sleep(2)
+    random_startup_list = [ibm_dos_screen, commodore_pet_screen, unix_screen]
     random_startup = random.choice(random_startup_list)
     random_startup()
     initial_loading_screen()
 
 
 def commodore_pet_screen():
-    sleep(3)
     cls()
     sleep(2)
     stop_sound()
@@ -97,6 +88,9 @@ def commodore_pet_screen():
 
 
 def ibm_dos_screen():
+    pc_powerup()
+    sleep(5)
+    floppy_insert_and_load()
     cls()
     sleep(2)
     stop_sound()
@@ -150,6 +144,8 @@ def unix_screen():
                  "don_daglow"]
     user = random.choice(user_list)
     cls()
+    sleep(2)
+    stop_sound()
     print("digital PDP 11/23 PLUS")
     sleep(.5)
     cls()
@@ -176,15 +172,18 @@ def unix_screen():
     sleep(1)
     same_line_print("Please wait. ")
     spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD..
-    # sleep(2)
     cls()
     same_line_print("Console Login: ")
     sleep(1)
+    clacky_keyboard_short()
+    sleep(.25)
     same_line_teletype(user)
     print()
     sleep(.5)
     print()
     sleep(.5)
+    clacky_keyboard_short2()
+    sleep(.25)
     same_line_print("Password: ")
     sleep(1.5)
     print("\n")
@@ -197,15 +196,28 @@ def unix_screen():
     sleep(1)
     same_line_print("$ ")
     sleep(1.5)
+    clacky_keyboard_short()
+    sleep(.5)
     same_line_teletype("cd /usr/games\n")
     sleep(.5)
     same_line_print("$ ")
     sleep(1.5)
-    same_line_teletype("ls\n")
+    clacky_keyboard_short()
+    sleep(.5)
+    same_line_teletype("ls -l\n")
     sleep(.25)
-    print(f"adventure\ncanyon\ndnd\nDND\ndungeon\nchess\nspace_travel\nsauengard\n")
+    #print(f"adventure\ncanyon\ndnd\nDND\ndungeon\nchess\nspace_travel\nsauengard\n")
+    print(f"-rwxr--r--  1  {user}  {user}    1479 Jun 25 09:50 adventure\n"
+          f"-rwxr--r--  1  {user}  {user}    1479 Jul 15 06:45 canyon\n"
+          f"-rwxr--r--  1  {user}  {user}    1479 Aug 05 19:20 dnd\n"
+          f"-rwxr--r--  1  {user}  {user}    1479 Jan 12 09:30 DND\n"
+          f"-rwxr--r--  1  {user}  {user}    1479 Oct 17 05:12 chess\n"
+          f"-rwxr--r--  1  {user}  {user}    1479 Dec 24 23:13 space_travel\n"
+          f"-rwxr--r--  1  {user}  {user}    1479 May 27 08:10 sauengard\n")
     same_line_print("$ ")
     sleep(1.5)
+    clacky_keyboard_short2()
+    sleep(.5)
     same_line_teletype("./sauengard\n")
     print("\n")
     sleep(2)

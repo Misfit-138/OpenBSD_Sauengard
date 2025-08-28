@@ -10,7 +10,7 @@ Telengard by Daniel Lawrence, as well as Milton Bradley's
 brilliant Dark Tower tabletop electronic board game.
 It is a fun and immersive RPG with relatively sophisticated 
 battle system, great loot and inventory, customizable character
-creation, an epic quest, and leveling. It also features immersive atmospherics, 
+creation, an epic quest, and leveling. It also features immersive atmospherics, background music
 >and ASCII artwork. Sauengard runs in the console, or within a virtual console.
 
 ## Development:

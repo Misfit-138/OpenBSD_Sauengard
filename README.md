@@ -16,11 +16,7 @@ creation, an epic quest, and leveling. It also features immersive atmospherics,
 ## Development:
 
 - I have added background music licensed under the Creative Commons
-license, but had difficulty with the sound system on POSIX systems.
-Anyone willing to help with a sound port is welcome. 
-It should be quite simple for anyone with basic Python knowledge. 
-Please contact me at: 
-pitsker@proton.me
+license, and it should be working for OpenBSD! 
 
 ## Installation:
 
@@ -32,6 +28,11 @@ pitsker@proton.me
 ```
 $ python3 /path/to/main.py
 ```
+
+## Issues?
+Please contact me at: 
+pitsker@proton.me
+
 ## License
 
 This source code is licensed under the BSD 3-Clause License found in the LICENSE file

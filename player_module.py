@@ -16,7 +16,6 @@ from dungeons import dungeon_dict
 from monster_module import monster_dict, king_boss_list, undead_prophet_list, WickedQueenJannbrielle
 from pathlib import Path
 import itertools
-from termios import tcflush, TCIFLUSH
 import termios
 import tty
 import select
@@ -403,9 +402,9 @@ def game_splash():
         print("                     "
               "W  E  L  C  O  M  E    T O    S  A  U  E  N  G  A  R  D.")
         print(f"                            Copyright 2022, 2023, by Jules Pitsker")
-        choice = input(f"               "
+        choice = input(f"      "
                        f"(Quit) to Desktop  (A)bout  (T)ips  (C)redits  "
-                       f"(L)icense  (B)egin ").lower()
+                       f"(L)icense  (M)ute/Unmute (B)egin ").lower()
 
         if choice == 'a':
             teletype_txt_file('about.txt')
@@ -436,6 +435,12 @@ def game_splash():
 
         elif choice == 'quit':
             quit_game()
+
+        elif choice == 'm':
+            if _player._muted:
+                _player.unmute()
+            else:
+                _player.mute()
 
         elif choice == 'b':
             return
@@ -771,105 +776,293 @@ def augmentation_intro():
     pause()
 
 
-def _resolve_sound_path(sound_file: str):
-    from pathlib import Path
-    sound_folder = Path(__file__).with_name("sound")
-    return sound_folder / sound_file
+# def _resolve_sound_path(sound_file: str):
+#     from pathlib import Path
+#     sound_folder = Path(__file__).with_name("sound")
+#     return sound_folder / sound_file
+#
+#
+# def _launch_aucat_once(filepath):
+#     """Start one asynchronous play of filepath via aucat."""
+#     global _sound_proc
+#     try:
+#         _sound_proc = subprocess.Popen(
+#             ["aucat", "-i", str(filepath)],
+#             stdout=subprocess.DEVNULL,
+#             stderr=subprocess.DEVNULL,
+#             close_fds=True,
+#         )
+#     except FileNotFoundError:
+#         print("Error: 'aucat' not found. Install/enable sndio utilities.")
+#     except Exception as e:
+#         print(f"Error starting playback: {e}")
+#
+# def stop_sound():
+#     """
+#     Stop any current/looping playback, like winsound.PlaySound(None, 0).
+#     """
+#     global _sound_proc, _sound_loop_thread, _sound_stop_event
+#
+#     _sound_stop_event.set()
+#
+#     # terminate any active aucat process
+#     p = _sound_proc
+#     if p and p.poll() is None:
+#         try:
+#             p.terminate()
+#         except Exception:
+#             pass
+#     _sound_proc = None
+#
+#     # wait for loop thread to exit (avoid self-join)
+#     t = _sound_loop_thread
+#     if t and t.is_alive() and t is not threading.current_thread():
+#         t.join(timeout=1.0)
+#     _sound_loop_thread = None
+#
+#
+# def sound_player(sound_file):
+#     """Asynchronously play a sound file once (returns immediately)."""
+#     try:
+#         path = _resolve_sound_path(sound_file)
+#         if not path.exists():
+#             # fail silently (or log once if debugging)
+#             print(f"[sound] {path} not found, skipping playback.")
+#             return
+#
+#         stop_sound()
+#         _launch_aucat_once(path)
+#
+#     except Exception as e:
+#         print(f"[sound] error starting playback: {e}")
+#
+#
+# def sound_player_loop(sound_file):
+#     """Asynchronously play a sound file in a continuous loop (returns immediately)."""
+#     global _sound_loop_thread, _sound_stop_event
+#
+#     try:
+#         path = _resolve_sound_path(sound_file)
+#         if not path.exists():
+#             print(f"[sound] {path} not found, skipping playback.")
+#             return
+#
+#         stop_sound()
+#         _sound_stop_event.clear()
+#
+#         def _loop_runner():
+#             while not _sound_stop_event.is_set():
+#                 _launch_aucat_once(path)
+#                 proc = _sound_proc
+#                 if proc is None:
+#                     break
+#                 while proc.poll() is None and not _sound_stop_event.is_set():
+#                     try:
+#                         proc.wait(timeout=0.2)
+#                     except subprocess.TimeoutExpired:
+#                         pass
+#
+#         t = threading.Thread(target=_loop_runner, daemon=True)
+#         _sound_loop_thread = t
+#         t.start()
+#
+#     except Exception as e:
+#         print(f"[sound] error starting loop: {e}")
+#
+#
+# # --- Ensure sound always stops on exit ---
+# atexit.register(stop_sound)
 
+# def _resolve_sound_path(sound_file: str) -> Path:
+#     """Return the full path to the sound file in ./sound directory."""
+#     return Path(__file__).with_name("sound") / sound_file
+#
+#
+# def _launch_aucat_once(filepath: Path):
+#     """Start one asynchronous play of filepath via aucat."""
+#     global _sound_proc
+#     try:
+#         _sound_proc = subprocess.Popen(
+#             ["aucat", "-i", str(filepath)],
+#             stdout=subprocess.DEVNULL,
+#             stderr=subprocess.DEVNULL,
+#             close_fds=True,
+#         )
+#     except FileNotFoundError:
+#         print("Error: 'aucat' not found. Install/enable sndio utilities.")
+#     except Exception as e:
+#         print(f"Error starting playback: {e}")
+#
+#
+# def stop_sound():
+#     """
+#     Stop any current/looping playback, like winsound.PlaySound(None, 0).
+#     """
+#     global _sound_proc, _sound_loop_thread, _sound_stop_event
+#
+#     _sound_stop_event.set()
+#
+#     # terminate any active aucat process
+#     if _sound_proc and _sound_proc.poll() is None:
+#         try:
+#             _sound_proc.terminate()
+#         except Exception:
+#             pass
+#     _sound_proc = None
+#
+#     # wait for loop thread to exit (avoid joining self)
+#     t = _sound_loop_thread
+#     if t and t.is_alive() and t is not threading.current_thread():
+#         t.join(timeout=1.0)
+#     _sound_loop_thread = None
+#
+#
+# def sound_player(sound_file: str):
+#     """Asynchronously play a sound file once (returns immediately)."""
+#     path = _resolve_sound_path(sound_file)
+#     if not path.exists():
+#         print(f"[sound] {path} not found, skipping playback.")
+#         return
+#
+#     stop_sound()
+#     _launch_aucat_once(path)
+#
+#
+# def sound_player_loop(sound_file: str):
+#     """Asynchronously play a sound file in a continuous loop (returns immediately)."""
+#     global _sound_loop_thread, _sound_stop_event
+#
+#     path = _resolve_sound_path(sound_file)
+#     if not path.exists():
+#         print(f"[sound] {path} not found, skipping playback.")
+#         return
+#
+#     stop_sound()
+#     _sound_stop_event.clear()
+#
+#     def _loop_runner():
+#         while not _sound_stop_event.is_set():
+#             _launch_aucat_once(path)
+#             proc = _sound_proc
+#             if proc is None:
+#                 break
+#             while proc.poll() is None and not _sound_stop_event.is_set():
+#                 try:
+#                     proc.wait(timeout=0.2)
+#                 except subprocess.TimeoutExpired:
+#                     pass
+#
+#     t = threading.Thread(target=_loop_runner, daemon=True)
+#     _sound_loop_thread = t
+#     t.start()
+#
+#
+# # --- Ensure sound always stops on exit ---
+# atexit.register(stop_sound)
 
-def _launch_aucat_once(filepath):
-    """Start one asynchronous play of filepath via aucat."""
-    global _sound_proc
-    try:
-        _sound_proc = subprocess.Popen(
-            ["aucat", "-i", str(filepath)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            close_fds=True,
-        )
-    except FileNotFoundError:
-        print("Error: 'aucat' not found. Install/enable sndio utilities.")
-    except Exception as e:
-        print(f"Error starting playback: {e}")
+class SoundPlayer:
+    """Encapsulates sound state for asynchronous playback, looping, and mute control."""
 
+    def __init__(self):
+        self._proc: subprocess.Popen | None = None
+        self._loop_thread: threading.Thread | None = None
+        self._stop_event = threading.Event()
+        self._muted = False
+        atexit.register(self.stop)
 
-def stop_sound():
-    """
-    Stop any current/looping playback, like winsound.PlaySound(None, 0).
-    """
-    global _sound_proc, _sound_loop_thread, _sound_stop_event
+    def _resolve_sound_path(self, sound_file: str) -> Path:
+        """Return the full path to the sound file in ./sound directory."""
+        return Path(__file__).with_name("sound") / sound_file
 
-    _sound_stop_event.set()
-
-    # terminate any active aucat process
-    p = _sound_proc
-    if p and p.poll() is None:
+    def _launch_once(self, path: Path):
+        """Play a sound file once asynchronously via aucat."""
+        if self._muted:
+            return
         try:
-            p.terminate()
-        except Exception:
-            pass
-    _sound_proc = None
+            self._proc = subprocess.Popen(
+                ["aucat", "-i", str(path)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                close_fds=True,
+            )
+        except FileNotFoundError:
+            print("Error: 'aucat' not found. Install/enable sndio utilities.")
+        except Exception as e:
+            print(f"Error starting playback: {e}")
 
-    # wait for loop thread to exit (avoid self-join)
-    t = _sound_loop_thread
-    if t and t.is_alive() and t is not threading.current_thread():
-        t.join(timeout=1.0)
-    _sound_loop_thread = None
+    def stop(self):
+        """Stop any current/looping playback (like winsound.PlaySound(None, 0))."""
+        self._stop_event.set()
 
+        if self._proc and self._proc.poll() is None:
+            try:
+                self._proc.terminate()
+            except Exception:
+                pass
+        self._proc = None
 
-def sound_player(sound_file):
-    """Asynchronously play a sound file once (returns immediately)."""
-    try:
-        path = _resolve_sound_path(sound_file)
-        if not path.exists():
-            # fail silently (or log once if debugging)
-            print(f"[sound] {path} not found, skipping playback.")
+        t = self._loop_thread
+        if t and t.is_alive() and t is not threading.current_thread():
+            t.join(timeout=1.0)
+        self._loop_thread = None
+
+    def play(self, sound_file: str):
+        """Play a sound file once asynchronously."""
+        if self._muted:
             return
-
-        stop_sound()
-        _launch_aucat_once(path)
-
-    except Exception as e:
-        print(f"[sound] error starting playback: {e}")
-
-
-def sound_player_loop(sound_file):
-    """Asynchronously play a sound file in a continuous loop (returns immediately)."""
-    global _sound_loop_thread, _sound_stop_event
-
-    try:
-        path = _resolve_sound_path(sound_file)
+        path = self._resolve_sound_path(sound_file)
         if not path.exists():
             print(f"[sound] {path} not found, skipping playback.")
             return
+        self.stop()
+        self._launch_once(path)
 
-        stop_sound()
-        _sound_stop_event.clear()
+    def loop(self, sound_file: str):
+        """Play a sound file asynchronously in a continuous loop."""
+        if self._muted:
+            return
+        path = self._resolve_sound_path(sound_file)
+        if not path.exists():
+            print(f"[sound] {path} not found, skipping playback.")
+            return
 
-        def _loop_runner():
-            while not _sound_stop_event.is_set():
-                _launch_aucat_once(path)
-                proc = _sound_proc
+        self.stop()
+        self._stop_event.clear()
+
+        def loop_runner():
+            while not self._stop_event.is_set() and not self._muted:
+                self._launch_once(path)
+                proc = self._proc
                 if proc is None:
                     break
-                while proc.poll() is None and not _sound_stop_event.is_set():
+                while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
                     try:
                         proc.wait(timeout=0.2)
                     except subprocess.TimeoutExpired:
                         pass
 
-        t = threading.Thread(target=_loop_runner, daemon=True)
-        _sound_loop_thread = t
+        t = threading.Thread(target=loop_runner, daemon=True)
+        self._loop_thread = t
         t.start()
 
-    except Exception as e:
-        print(f"[sound] error starting loop: {e}")
+    # --- Mute control ---
+    def mute(self):
+        """Mute all playback immediately."""
+        self._muted = True
+        self.stop()
+
+    def unmute(self):
+        """Unmute and allow future playback."""
+        self._muted = False
 
 
-# --- Ensure sound always stops on exit ---
-atexit.register(stop_sound)
-
-
+# --- module-level instance for drop-in API ---
+_player = SoundPlayer()
+stop_sound = _player.stop
+sound_player = _player.play
+sound_player_loop = _player.loop
+mute_sound = _player.mute
+unmute_sound = _player.unmute
 
 def gong():
     # notice the gong is not looped!

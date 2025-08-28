@@ -437,10 +437,9 @@ def game_splash():
             quit_game()
 
         elif choice == 'm':
-            if _player._muted:
-                _player.unmute()
-            else:
-                _player.mute()
+            muted = toggle_mute()
+            print("Muted" if muted else "Unmuted", flush=True)
+            sleep(1)
 
         elif choice == 'b':
             return
@@ -776,192 +775,8 @@ def augmentation_intro():
     pause()
 
 
-# def _resolve_sound_path(sound_file: str):
-#     from pathlib import Path
-#     sound_folder = Path(__file__).with_name("sound")
-#     return sound_folder / sound_file
-#
-#
-# def _launch_aucat_once(filepath):
-#     """Start one asynchronous play of filepath via aucat."""
-#     global _sound_proc
-#     try:
-#         _sound_proc = subprocess.Popen(
-#             ["aucat", "-i", str(filepath)],
-#             stdout=subprocess.DEVNULL,
-#             stderr=subprocess.DEVNULL,
-#             close_fds=True,
-#         )
-#     except FileNotFoundError:
-#         print("Error: 'aucat' not found. Install/enable sndio utilities.")
-#     except Exception as e:
-#         print(f"Error starting playback: {e}")
-#
-# def stop_sound():
-#     """
-#     Stop any current/looping playback, like winsound.PlaySound(None, 0).
-#     """
-#     global _sound_proc, _sound_loop_thread, _sound_stop_event
-#
-#     _sound_stop_event.set()
-#
-#     # terminate any active aucat process
-#     p = _sound_proc
-#     if p and p.poll() is None:
-#         try:
-#             p.terminate()
-#         except Exception:
-#             pass
-#     _sound_proc = None
-#
-#     # wait for loop thread to exit (avoid self-join)
-#     t = _sound_loop_thread
-#     if t and t.is_alive() and t is not threading.current_thread():
-#         t.join(timeout=1.0)
-#     _sound_loop_thread = None
-#
-#
-# def sound_player(sound_file):
-#     """Asynchronously play a sound file once (returns immediately)."""
-#     try:
-#         path = _resolve_sound_path(sound_file)
-#         if not path.exists():
-#             # fail silently (or log once if debugging)
-#             print(f"[sound] {path} not found, skipping playback.")
-#             return
-#
-#         stop_sound()
-#         _launch_aucat_once(path)
-#
-#     except Exception as e:
-#         print(f"[sound] error starting playback: {e}")
-#
-#
-# def sound_player_loop(sound_file):
-#     """Asynchronously play a sound file in a continuous loop (returns immediately)."""
-#     global _sound_loop_thread, _sound_stop_event
-#
-#     try:
-#         path = _resolve_sound_path(sound_file)
-#         if not path.exists():
-#             print(f"[sound] {path} not found, skipping playback.")
-#             return
-#
-#         stop_sound()
-#         _sound_stop_event.clear()
-#
-#         def _loop_runner():
-#             while not _sound_stop_event.is_set():
-#                 _launch_aucat_once(path)
-#                 proc = _sound_proc
-#                 if proc is None:
-#                     break
-#                 while proc.poll() is None and not _sound_stop_event.is_set():
-#                     try:
-#                         proc.wait(timeout=0.2)
-#                     except subprocess.TimeoutExpired:
-#                         pass
-#
-#         t = threading.Thread(target=_loop_runner, daemon=True)
-#         _sound_loop_thread = t
-#         t.start()
-#
-#     except Exception as e:
-#         print(f"[sound] error starting loop: {e}")
-#
-#
-# # --- Ensure sound always stops on exit ---
-# atexit.register(stop_sound)
-
-# def _resolve_sound_path(sound_file: str) -> Path:
-#     """Return the full path to the sound file in ./sound directory."""
-#     return Path(__file__).with_name("sound") / sound_file
-#
-#
-# def _launch_aucat_once(filepath: Path):
-#     """Start one asynchronous play of filepath via aucat."""
-#     global _sound_proc
-#     try:
-#         _sound_proc = subprocess.Popen(
-#             ["aucat", "-i", str(filepath)],
-#             stdout=subprocess.DEVNULL,
-#             stderr=subprocess.DEVNULL,
-#             close_fds=True,
-#         )
-#     except FileNotFoundError:
-#         print("Error: 'aucat' not found. Install/enable sndio utilities.")
-#     except Exception as e:
-#         print(f"Error starting playback: {e}")
-#
-#
-# def stop_sound():
-#     """
-#     Stop any current/looping playback, like winsound.PlaySound(None, 0).
-#     """
-#     global _sound_proc, _sound_loop_thread, _sound_stop_event
-#
-#     _sound_stop_event.set()
-#
-#     # terminate any active aucat process
-#     if _sound_proc and _sound_proc.poll() is None:
-#         try:
-#             _sound_proc.terminate()
-#         except Exception:
-#             pass
-#     _sound_proc = None
-#
-#     # wait for loop thread to exit (avoid joining self)
-#     t = _sound_loop_thread
-#     if t and t.is_alive() and t is not threading.current_thread():
-#         t.join(timeout=1.0)
-#     _sound_loop_thread = None
-#
-#
-# def sound_player(sound_file: str):
-#     """Asynchronously play a sound file once (returns immediately)."""
-#     path = _resolve_sound_path(sound_file)
-#     if not path.exists():
-#         print(f"[sound] {path} not found, skipping playback.")
-#         return
-#
-#     stop_sound()
-#     _launch_aucat_once(path)
-#
-#
-# def sound_player_loop(sound_file: str):
-#     """Asynchronously play a sound file in a continuous loop (returns immediately)."""
-#     global _sound_loop_thread, _sound_stop_event
-#
-#     path = _resolve_sound_path(sound_file)
-#     if not path.exists():
-#         print(f"[sound] {path} not found, skipping playback.")
-#         return
-#
-#     stop_sound()
-#     _sound_stop_event.clear()
-#
-#     def _loop_runner():
-#         while not _sound_stop_event.is_set():
-#             _launch_aucat_once(path)
-#             proc = _sound_proc
-#             if proc is None:
-#                 break
-#             while proc.poll() is None and not _sound_stop_event.is_set():
-#                 try:
-#                     proc.wait(timeout=0.2)
-#                 except subprocess.TimeoutExpired:
-#                     pass
-#
-#     t = threading.Thread(target=_loop_runner, daemon=True)
-#     _sound_loop_thread = t
-#     t.start()
-#
-#
-# # --- Ensure sound always stops on exit ---
-# atexit.register(stop_sound)
-
 class SoundPlayer:
-    """Encapsulates sound state for asynchronous playback, looping, and mute control."""
+    """Encapsulates sound state for asynchronous playback, looping, and mute/unmute via stop/start."""
 
     def __init__(self):
         self._proc: subprocess.Popen | None = None
@@ -976,8 +791,6 @@ class SoundPlayer:
 
     def _launch_once(self, path: Path):
         """Play a sound file once asynchronously via aucat."""
-        if self._muted:
-            return
         try:
             self._proc = subprocess.Popen(
                 ["aucat", "-i", str(path)],
@@ -991,7 +804,7 @@ class SoundPlayer:
             print(f"Error starting playback: {e}")
 
     def stop(self):
-        """Stop any current/looping playback (like winsound.PlaySound(None, 0))."""
+        """Stop any current/looping playback completely."""
         self._stop_event.set()
 
         if self._proc and self._proc.poll() is None:
@@ -1019,8 +832,6 @@ class SoundPlayer:
 
     def loop(self, sound_file: str):
         """Play a sound file asynchronously in a continuous loop."""
-        if self._muted:
-            return
         path = self._resolve_sound_path(sound_file)
         if not path.exists():
             print(f"[sound] {path} not found, skipping playback.")
@@ -1045,16 +856,15 @@ class SoundPlayer:
         self._loop_thread = t
         t.start()
 
-    # --- Mute control ---
+    # --- Mute control (stop/start) ---
     def mute(self):
-        """Mute all playback immediately."""
+        """Mute playback immediately by stopping sound."""
         self._muted = True
         self.stop()
 
     def unmute(self):
-        """Unmute and allow future playback."""
+        """Unmute: future playback works normally."""
         self._muted = False
-
 
 # --- module-level instance for drop-in API ---
 _player = SoundPlayer()
@@ -1063,6 +873,17 @@ sound_player = _player.play
 sound_player_loop = _player.loop
 mute_sound = _player.mute
 unmute_sound = _player.unmute
+
+# --- convenience toggle ---
+def toggle_mute():
+    """Toggle mute/unmute. Returns True if muted, False if unmuted."""
+    if _player._muted:
+        _player.unmute()
+        return False  # unmuted
+    else:
+        _player.mute()
+        return True   # muted
+
 
 def gong():
     # notice the gong is not looped!
@@ -7023,7 +6844,7 @@ class Player:
 
             print(f"Your gold: {self.gold} GP")
             chemist_choice = input(
-                "(P)urchase quantum items, (S)ell quantum items, Display your (I)nventory, or "
+                "(P)urchase quantum items, (S)ell quantum items, Display your (I)nventory, "
                 "(E)xit the chemist: ").lower()
 
             if chemist_choice == 'p':
@@ -7397,8 +7218,6 @@ class Player:
                 self.sell_blacksmith_items()
                 continue
 
-            elif blacksmith_choice == 'm':
-                self.item_management_sub_menu()
 
             elif blacksmith_choice == 'i':
                 self.inventory()
@@ -10027,10 +9846,10 @@ class Player:
             town_theme()
         if self.town_portal_exists:  # or self.loaded_game:
             town_functions = input("(The Town of Fieldenberg)\n(Quit) to desktop, (R)estart game (I)nventory, "
-                                   "(B)lacksmith, (C)hemist , (T)avern, or re-(E)nter dungeon --> ").lower()
+                                   "(B)lacksmith, (C)hemist , (T)avern, (M)ute/unmute, or re-(E)nter dungeon --> ").lower()
         else:
             town_functions = input("(The Town of Fieldenberg)\n(Quit) to desktop, (R)estart game (I)nventory, "
-                                   "(B)lacksmith, (C)hemist , (T)avern, or (E)nter dungeon --> ").lower()
+                                   "(B)lacksmith, (C)hemist , (T)avern, (M)ute/unmute, or (E)nter dungeon --> ").lower()
         if town_functions == 'r':
             return self.restart()
 
@@ -10063,6 +9882,11 @@ class Player:
             tavern_theme()
             self.tavern()
             town_theme()
+
+        elif town_functions == 'm':
+            muted = toggle_mute()
+            print("Muted" if muted else "Unmuted", flush=True)
+            sleep(1)
 
         elif town_functions == 'e':
 

@@ -20,10 +20,10 @@ import termios
 import tty
 import select
 
-# --- internal state ---
-_sound_proc = None
-_sound_loop_thread = None
-_sound_stop_event = threading.Event()
+# # --- internal state ---
+# _sound_proc = None
+# _sound_loop_thread = None
+# _sound_stop_event = threading.Event()
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!

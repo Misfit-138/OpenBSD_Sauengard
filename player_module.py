@@ -7,6 +7,9 @@ import pickle
 import random
 import time
 import os
+import subprocess
+import threading
+import atexit
 import sys
 from collections import Counter
 from dungeons import dungeon_dict
@@ -14,7 +17,14 @@ from monster_module import monster_dict, king_boss_list, undead_prophet_list, Wi
 from pathlib import Path
 import itertools
 from termios import tcflush, TCIFLUSH
+import termios
+import tty
+import select
 
+# --- internal state ---
+_sound_proc = None
+_sound_loop_thread = None
+_sound_stop_event = threading.Event()
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
@@ -263,7 +273,7 @@ def spinner(number_of_spins):
         sys.stdout.write('\b')  # erase the last written char
         sleep(.005)
 
-
+"""
 def escape_key_interrupt_teletype(message):
     # I am proud of this little snippet I figured out,
     # but unfortunately, it does not work reliably on *nix due to permissions problems with the 'keyboard' module.
@@ -281,7 +291,34 @@ def escape_key_interrupt_teletype(message):
 
     #else:
     #    return False
+"""
+def escape_key_interrupt_teletype(message):
+    """
+    Works on OpenBSD 7.7: detect ESC immediately (no Enter needed).
+    """
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
 
+    # Copy settings we can modify
+    new_settings = termios.tcgetattr(fd)
+    # Local flags: disable canonical mode (ICANON) and echo (ECHO)
+    new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
+    termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
+
+    try:
+        dr, _, _ = select.select([sys.stdin], [], [], 0)
+        if dr:
+            ch = sys.stdin.read(1)
+            if ch == '\x1b':  # ESC key
+                print("\033c", end="")  # clear screen
+                print()
+                print(message)
+                return True
+    finally:
+        # Always restore original terminal state
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+    return False
 
 def same_line_print(string):
     # simple function that does not add a carriage return, allowing next item to be printed on same line
@@ -366,8 +403,19 @@ def game_splash():
             teletype_txt_file('tips.txt')
             pause()
 
+
         elif choice == 'c':
+
             print_txt_file('credits.txt')
+
+            pause()
+
+            print_txt_file('credits2.txt')
+
+            pause()
+
+            print_txt_file('credits3.txt')
+
             pause()
 
         elif choice == 'l':
@@ -678,46 +726,104 @@ def augmentation_intro():
     pause()
 
 
+def _resolve_sound_path(sound_file: str):
+    from pathlib import Path
+    sound_folder = Path(__file__).with_name("sound")
+    return sound_folder / sound_file
+
+
+def _launch_aucat_once(filepath):
+    """Start one asynchronous play of filepath via aucat."""
+    global _sound_proc
+    try:
+        _sound_proc = subprocess.Popen(
+            ["aucat", "-i", str(filepath)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            close_fds=True,
+        )
+    except FileNotFoundError:
+        print("Error: 'aucat' not found. Install/enable sndio utilities.")
+    except Exception as e:
+        print(f"Error starting playback: {e}")
+
+
 def stop_sound():
-    pass
-    #winsound.PlaySound(None, 0)
+    """
+    Stop any current/looping playback, like winsound.PlaySound(None, 0).
+    """
+    global _sound_proc, _sound_loop_thread, _sound_stop_event
+
+    _sound_stop_event.set()
+
+    # terminate any active aucat process
+    p = _sound_proc
+    if p and p.poll() is None:
+        try:
+            p.terminate()
+        except Exception:
+            pass
+    _sound_proc = None
+
+    # wait for loop thread to exit (avoid self-join)
+    t = _sound_loop_thread
+    if t and t.is_alive() and t is not threading.current_thread():
+        t.join(timeout=1.0)
+    _sound_loop_thread = None
 
 
 def sound_player(sound_file):
-    # a sound player function which simply plays sound_file asynchronously
-    pass
-    #if os.name == 'nt':
-    #    p = ""
-    #    try:
-    #        sound_folder = Path(__file__).with_name("sound")
-    #        p = sound_folder / sound_file
-    #        # p = Path(__file__).with_name(sound_file)
-    #        with p.open('rb') as sound:
-    #            if sound.readable():
-    #                winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_ASYNC)
-    #    except FileNotFoundError:
-            # pass  # restore after testing
-    #        print(f"{p} not found.")  # remove after testing
-    #        pause()  # remove after testing
+    """Asynchronously play a sound file once (returns immediately)."""
+    try:
+        path = _resolve_sound_path(sound_file)
+        if not path.exists():
+            # fail silently (or log once if debugging)
+            print(f"[sound] {path} not found, skipping playback.")
+            return
+
+        stop_sound()
+        _launch_aucat_once(path)
+
+    except Exception as e:
+        print(f"[sound] error starting playback: {e}")
 
 
 def sound_player_loop(sound_file):
-    # a sound player function which plays sound_file asynchronously on a continuous loop
-    pass
-    #if os.name == 'nt':
-    #    p = ""
-    #    try:
-    #        sound_folder = Path(__file__).with_name("sound")
-    #        p = sound_folder / sound_file
-    #        # print(p)
-    #        # p = Path(__file__).with_name(sound_file)
-    #        with p.open('rb') as sound_loop:
-    #            if sound_loop.readable():
-    #                winsound.PlaySound(str(p), winsound.SND_FILENAME | winsound.SND_LOOP | winsound.SND_ASYNC)
-    #    except FileNotFoundError:
-            # pass  # restore after testing
-    #        print(f"{p} not found.")  # remove after testing
-    #        pause()  # remove after testing
+    """Asynchronously play a sound file in a continuous loop (returns immediately)."""
+    global _sound_loop_thread, _sound_stop_event
+
+    try:
+        path = _resolve_sound_path(sound_file)
+        if not path.exists():
+            print(f"[sound] {path} not found, skipping playback.")
+            return
+
+        stop_sound()
+        _sound_stop_event.clear()
+
+        def _loop_runner():
+            while not _sound_stop_event.is_set():
+                _launch_aucat_once(path)
+                proc = _sound_proc
+                if proc is None:
+                    break
+                while proc.poll() is None and not _sound_stop_event.is_set():
+                    try:
+                        proc.wait(timeout=0.2)
+                    except subprocess.TimeoutExpired:
+                        pass
+
+        t = threading.Thread(target=_loop_runner, daemon=True)
+        _sound_loop_thread = t
+        t.start()
+
+    except Exception as e:
+        print(f"[sound] error starting loop: {e}")
+
+
+# --- Ensure sound always stops on exit ---
+atexit.register(stop_sound)
+
 
 
 def gong():
@@ -1699,11 +1805,10 @@ class Player:
         }
 
     def dungeon_theme(self):
-        if os.name == 'nt':
-            if not self.in_a_pit:
-                sound_player_loop('dungeon_theme_2.wav')
-            else:
-                pit_theme()
+        if not self.in_a_pit:
+            sound_player_loop('dungeon_theme_2.wav')
+        else:
+            pit_theme()
 
     def regenerate(self):
         if self.hit_points < self.maximum_hit_points and self.ring_of_reg.regenerate > 0:

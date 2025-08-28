@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="cleaned up about.txt">
-      <change beforePath="$PROJECT_DIR$/text/about.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/about.txt" afterDir="false" />
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="edit typo in installation and running">
+      <change afterPath="$PROJECT_DIR$/text/credits2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/text/credits3.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/player_module.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,6 +18,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -136,15 +141,7 @@
       <option name="project" value="LOCAL" />
       <updated>1750861408225</updated>
     </task>
-    <task id="LOCAL-00010" summary="cleaned up about.txt">
-      <option name="closed" value="true" />
-      <created>1750891587187</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1750891587187</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -165,7 +162,6 @@
     <MESSAGE value="commit edits to copyright" />
     <MESSAGE value="commit edits including removing showing monster hit points" />
     <MESSAGE value="edit typo in installation and running" />
-    <MESSAGE value="cleaned up about.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaned up about.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit typo in installation and running" />
   </component>
 </project>

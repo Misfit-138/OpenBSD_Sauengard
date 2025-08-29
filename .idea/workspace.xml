@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="Cleanup">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/monster_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/monster_module.py" afterDir="false" />
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="Code Cleanup">
+      <change afterPath="$PROJECT_DIR$/trett.sav" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/player_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/player_module.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -150,7 +149,23 @@
       <option name="project" value="LOCAL" />
       <updated>1756475576745</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Code Cleanup">
+      <option name="closed" value="true" />
+      <created>1756482361699</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1756482361699</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Code Cleanup">
+      <option name="closed" value="true" />
+      <created>1756482711483</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1756482711483</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -172,6 +187,7 @@
     <MESSAGE value="commit edits including removing showing monster hit points" />
     <MESSAGE value="edit typo in installation and running" />
     <MESSAGE value="Cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleanup" />
+    <MESSAGE value="Code Cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code Cleanup" />
   </component>
 </project>

@@ -43,7 +43,7 @@ $ git lfs pull
 > This ensures all large sound files in the `sound/` directory are downloaded.
 
 ---
-$ git lfs install
+
 ## Verify sound files (optional)
 ```
 $ ls -lh sound/

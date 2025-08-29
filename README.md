@@ -69,6 +69,7 @@ pitsker at proton.me
 ## License
 
 This source code is licensed under the BSD 3-Clause License found in the LICENSE file
-in the root directory of this source tree.
+in the root directory of this source tree. The audio files are licensed under the Creative Commons
+License, except as noted in the Credits.
 
 Copyright © 2022, 2023, 2025

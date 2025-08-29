@@ -128,7 +128,7 @@ class Monster:
         else:
             mon_data = f"{self.proper_name}  AC: {self.armor_class}  " \
                        f"({self.number_of_hd}d{self.hit_dice})"
-            #          f"HP: {self.hit_points}  # add this before number of hit die to show HP
+            #          f"HP: {self.hit_points}  # add this before number of hit dieF to show HP
         if self.undead:
             print(f"{mon_data} (UNDEAD)")
         else:
@@ -1903,7 +1903,7 @@ class HalfOgre(Monster):
         self.attack_4_phrase = "It roars and swings its battleaxe with murderous rage!"
         self.attack_5 = 3
         self.attack_5_phrase = "It raises its battleaxe overhead with both hands for a mighty blow.."
-        self.introduction = f"You have encountered a Half-Ogre; a brutal, muscled monstrosity of primal rage." \
+        self.introduction = f"You have encountered a Half-Ogre; a brutal, muscled monstrosity of primal rage. " \
                             f"Neither human nor ogre,\nand equally shunned in both worlds, it lumbers " \
                             f"toward you, towering above and shaking the ground with great power.."
 

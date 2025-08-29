@@ -20,10 +20,6 @@ import termios
 import tty
 import select
 
-# # --- internal state ---
-# _sound_proc = None
-# _sound_loop_thread = None
-# _sound_stop_event = threading.Event()
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
@@ -136,7 +132,7 @@ def unix_screen():
     # Lawrence later wrote 'Telengard', a game based on 'DND'. 'Telengard' was a commercial success.
     # Lawrence denied having ever played 'dnd' on PLATO.
     # dnd maintainer and author, Dirk Pellett, claims that Daniel Lawrence outright plagiarized it.
-    # For more: http://www.armory.com/~dlp/dnd1.html)
+    # (For more: http://www.armory.com/~dlp/dnd1.html)
     user_list = ["ken_thompson", "dennis_ritchie",
                  "gary_whisenhunt", "ray_wood", "dirk_pellett", "flint_pellett",
                  "daniel_lawrence",
@@ -170,7 +166,7 @@ def unix_screen():
     same_line_print("The system is coming up.  ")
     sleep(1)
     same_line_print("Please wait. ")
-    spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD..
+    spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD.
     cls()
     same_line_print("Console Login: ")
     sleep(1)
@@ -284,29 +280,10 @@ def spinner(number_of_spins):
         sys.stdout.write('\b')  # erase the last written char
         sleep(.005)
 
-"""
+
 def escape_key_interrupt_teletype(message):
-    # I am proud of this little snippet I figured out,
-    # but unfortunately, it does not work reliably on *nix due to permissions problems with the 'keyboard' module.
-    return False
-    #if os.name == 'nt':
+    # Detect ESC immediately (no Enter needed).
 
-    #    if keyboard.is_pressed('Esc'):  # Skip through teletype message straight to printing, if escape is pressed:
-    #        cls()
-    #        print()  # skip a line, just like teletype(), so printed text will line up perfectly with teletyped text
-    #        print(message)
-    #        return True
-
-     #   else:
-     #       return False
-
-    #else:
-    #    return False
-"""
-def escape_key_interrupt_teletype(message):
-    """
-    Works on OpenBSD 7.7: detect ESC immediately (no Enter needed).
-    """
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
 
@@ -473,7 +450,7 @@ def pause():
         # Flush stdin to prevent buffered input from triggering immediately
         try:
             termios.tcflush(fd, termios.TCIFLUSH)
-        except Exception:
+        except OSError:
             pass
 
         print("Press any key to continue . . . ", end='', flush=True)
@@ -497,12 +474,12 @@ def pause():
         print()  # move to next line after keypress
 
 def cls():
-    # for cross-platform compatibility
-    #if os.name == 'nt':
-    #    os.system('cls')
+    #for cross-platform compatibility
+    if os.name == 'nt':
+        os.system('cls')
 
-    #else:
-    os.system('clear')
+    else:
+        os.system('clear')
 
     return
 
@@ -758,6 +735,7 @@ def augmentation_intro():
     pause()
 
 
+################## Sound Stack: #########################
 class SoundPlayer:
     # Encapsulates sound state for asynchronous playback,
     # looping, and mute/unmute via stop/start.
@@ -794,7 +772,7 @@ class SoundPlayer:
         if self._proc and self._proc.poll() is None:
             try:
                 self._proc.terminate()
-            except Exception:
+            except OSError:
                 pass
         self._proc = None
 
@@ -850,6 +828,12 @@ class SoundPlayer:
         # Unmute: future playback works normally.
         self._muted = False
 
+    @property
+    def muted(self) -> bool:
+        """Public read-only property for mute state."""
+        return self._muted
+
+
 # --- module-level instance for drop-in API ---
 _player = SoundPlayer()
 stop_sound = _player.stop
@@ -861,14 +845,15 @@ unmute_sound = _player.unmute
 # --- convenience toggle ---
 def toggle_mute():
     # Toggle mute/unmute. Returns True if muted, False if unmuted.
-    if _player._muted:
+    if _player.muted:
         _player.unmute()
         return False  # unmuted
     else:
         _player.mute()
         return True   # muted
+#######################END SOUND STACK############################
 
-
+#######################.wav file playback#########################
 def gong():
     # notice the gong is not looped!
     sound_player('gong.wav')
@@ -932,6 +917,7 @@ def queen_confrontation_theme():
 
 def final_victory_theme():
     sound_player_loop('final_victory.wav')
+##################END .wav file playback############################
 
 
 class Weapon:
@@ -2722,7 +2708,7 @@ class Player:
         if self.monsters_on:
             self.encounter = dice_roll(1, 20)
         else:
-            self.encounter = 15  # this will make it so there are no monsters at all except bosses (for testing, etc)
+            self.encounter = 15  # this will make it so there are no monsters at all except bosses (for testing, etc.)
 
     def the_monster_is_not_amused(self, monster):
         # called from self.battle_menu_choices() for invalid inputs
@@ -9187,7 +9173,7 @@ class Player:
                 lost_item = (self.pack[item_type].pop(random.randint(0, len(self.pack[item_type]) - 1)))
                 print(f"Your load feels lighter..")
                 sleep(1)
-                print(f"The {lost_item.name} from your pack is gone!")  # from your {item_type}")  # dungeoneer's pack
+                print(f"The {lost_item.name} from your pack is gone!")  # from your {item_type} # dungeoneer's pack
                 pause()
                 return
         elif sum(belt_item_types_to_lose) > 0:

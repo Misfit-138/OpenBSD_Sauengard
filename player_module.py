@@ -1947,7 +1947,7 @@ class Player:
         teletype_txt_file('credits3.txt')
         pause()
         cls()
-        print(f"\nSauengard Copyright 2022, JULES PITSKER  (pitsker@proton.me)\nAll rights reserved\n")
+        print(f"\nSauengard Copyright 2022, 2023, 2025 by JULES PITSKER  (pitsker@proton.me)\n")
         pause()
 
         '''while True:

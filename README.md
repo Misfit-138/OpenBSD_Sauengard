@@ -18,20 +18,53 @@ creation, an epic quest, and leveling. It also features immersive atmospherics, 
 - I have added background music licensed under the Creative Commons
 license, and it should be working for OpenBSD! 
 
-## Installation:
+---
 
-- Prerequisites: 
-- Python v3. 
-- Download the files to a folder 
-  
-## Run with:
+## Prerequisites
+
+- Git
+- Git LFS
+- Python 3 (included by default in OpenBSD 7.7)
+
+---
+
+## Installation
+
+Clone the repository and download sound assets:
+
+```sh
+$ git clone https://github.com/Misfit-138/OpenBSD_Sauengard.git
+$ cd OpenBSD_Sauengard
+$ doas pkg_add git-lfs
+$ git lfs install
+$ git lfs pull
 ```
-$ python3 /path/to/main.py
+
+> This ensures all large sound files in the `sound/` directory are downloaded.
+
+---
+$ git lfs install
+## Verify sound files (optional)
 ```
+$ ls -lh sound/
+$ file sound/floppy_rw.wav
+```
+- The `file` command should report something like `RIFF (little-endian) data, WAVE audio`.  
+- If it reports `Git LFS pointer`, the assets were not downloaded properly.
+
+---
+
+## Running the game
+```sh  
+$ python3 main.py
+```
+- The game will run and play sound if LFS assets are present.  
+
+---
 
 ## Issues?
 Please contact me at: 
-pitsker@proton.me
+pitsker at proton.me
 
 ## License
 

@@ -462,26 +462,9 @@ def convert_list_to_string_with_and(list1):
     return readable_list
 
 
-# def compare():  # unused function?
-#    lambda x, y: collections.Counter(x) == collections.Counter(y)
-
-"""
-def pause():
-    # for cross-platform compatibility, I have tried to make this as best I can.
-    # MS Windows users will have a slight convenience in the ability to hit any key,
-    # whereas Posix/GNU/Linux users must hit ENTER
-    if os.name == 'nt':
-        os.system('pause')
-
-    else:
-        tcflush(sys.stdin, TCIFLUSH)  # flush input stream to prevent game disruption by player mashing ENTER key!
-        input("Press [ENTER] to continue . . . ")
-
-    return
-"""
 
 def pause():
-    """Pause execution until the user presses any key (OpenBSD/Linux/macOS)."""
+    # Press any key to continue
     if os.name == 'nt':
         os.system('pause')
     else:
@@ -776,7 +759,8 @@ def augmentation_intro():
 
 
 class SoundPlayer:
-    """Encapsulates sound state for asynchronous playback, looping, and mute/unmute via stop/start."""
+    # Encapsulates sound state for asynchronous playback,
+    # looping, and mute/unmute via stop/start.
 
     def __init__(self):
         self._proc: subprocess.Popen | None = None
@@ -786,11 +770,11 @@ class SoundPlayer:
         atexit.register(self.stop)
 
     def _resolve_sound_path(self, sound_file: str) -> Path:
-        """Return the full path to the sound file in ./sound directory."""
+        # Return the full path to the sound file in ./sound directory.
         return Path(__file__).with_name("sound") / sound_file
 
     def _launch_once(self, path: Path):
-        """Play a sound file once asynchronously via aucat."""
+        # Play a sound file once asynchronously via aucat.
         try:
             self._proc = subprocess.Popen(
                 ["aucat", "-i", str(path)],
@@ -804,7 +788,7 @@ class SoundPlayer:
             print(f"Error starting playback: {e}")
 
     def stop(self):
-        """Stop any current/looping playback completely."""
+        # Stop any current/looping playback completely.
         self._stop_event.set()
 
         if self._proc and self._proc.poll() is None:
@@ -820,7 +804,7 @@ class SoundPlayer:
         self._loop_thread = None
 
     def play(self, sound_file: str):
-        """Play a sound file once asynchronously."""
+        # Play a sound file once, asynchronously.
         if self._muted:
             return
         path = self._resolve_sound_path(sound_file)
@@ -831,7 +815,7 @@ class SoundPlayer:
         self._launch_once(path)
 
     def loop(self, sound_file: str):
-        """Play a sound file asynchronously in a continuous loop."""
+        # Play a sound file asynchronously in a continuous loop.
         path = self._resolve_sound_path(sound_file)
         if not path.exists():
             print(f"[sound] {path} not found, skipping playback.")
@@ -858,12 +842,12 @@ class SoundPlayer:
 
     # --- Mute control (stop/start) ---
     def mute(self):
-        """Mute playback immediately by stopping sound."""
+        # Mute playback immediately by stopping sound.
         self._muted = True
         self.stop()
 
     def unmute(self):
-        """Unmute: future playback works normally."""
+        # Unmute: future playback works normally.
         self._muted = False
 
 # --- module-level instance for drop-in API ---
@@ -876,7 +860,7 @@ unmute_sound = _player.unmute
 
 # --- convenience toggle ---
 def toggle_mute():
-    """Toggle mute/unmute. Returns True if muted, False if unmuted."""
+    # Toggle mute/unmute. Returns True if muted, False if unmuted.
     if _player._muted:
         _player.unmute()
         return False  # unmuted

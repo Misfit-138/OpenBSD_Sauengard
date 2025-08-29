@@ -348,7 +348,6 @@ def print_txt_file(txt_file_name):
     try:
         text_folder = Path(__file__).with_name("text")
         p = text_folder / txt_file_name
-        # p = Path(__file__).with_name(txt_file_name)
         with p.open('r') as txt:
             if txt.readable():
                 print(txt.read())
@@ -363,7 +362,6 @@ def teletype_txt_file(txt_file_name):
     try:
         text_folder = Path(__file__).with_name("text")
         p = text_folder / txt_file_name
-        # p = Path(__file__).with_name(txt_file_name)
         with p.open('r') as message:
             if message.readable():
                 teletype(message.read())
@@ -379,7 +377,7 @@ def game_splash():
         print("                     "
               "W  E  L  C  O  M  E    T O    S  A  U  E  N  G  A  R  D.")
         print(f"                            Copyright 2022, 2023, by Jules Pitsker")
-        choice = input(f"      "
+        choice = input(f"         "
                        f"(Quit) to Desktop  (A)bout  (T)ips  (C)redits  "
                        f"(L)icense  (M)ute/Unmute (B)egin ").lower()
 
@@ -415,7 +413,7 @@ def game_splash():
 
         elif choice == 'm':
             muted = toggle_mute()
-            print("Muted" if muted else "Unmuted", flush=True)
+            print("*MUTED*" if muted else "*UN-MUTED*", flush=True)
             sleep(1)
 
         elif choice == 'b':

@@ -30,6 +30,7 @@ else:  # POSIX (OpenBSD, Linux, macOS, etc.)
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
+
 # when passing a list as an argument, remember to use the * unpacking operator
 # seq = [1, 2, 3]
 # foo(*seq)

@@ -15,9 +15,11 @@ creation, an epic quest, and leveling. It also features immersive atmospherics, 
 
 ## Development:
 
-- I have added background music licensed under the Creative Commons
-license, and it should be working for OpenBSD! 
-
+I have added background music and sound effecrs licensed under the Creative Commons
+license, and the game should now be fully cross-compatible on:
+* OpenBSD (of course)
+* GNU/Linux
+* Windows
 ---
 
 ## Prerequisites
@@ -34,7 +36,7 @@ Clone the repository and download sound assets:
 
 ```sh
 $ git clone https://github.com/Misfit-138/OpenBSD_Sauengard.git
-$ cd OpenBSD_Sauengard
+$ cd OpenBSD_Sauengard/
 $ doas pkg_add git-lfs
 $ git lfs install
 $ git lfs pull
@@ -45,8 +47,9 @@ $ git lfs pull
 ---
 
 ## Verify sound files (optional)
-```
+```sh
 $ ls -lh sound/
+$ git lfs ls-files
 $ file sound/floppy_rw.wav
 ```
 - The `file` command should report something like `RIFF (little-endian) data, WAVE audio`.  

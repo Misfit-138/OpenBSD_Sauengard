@@ -201,7 +201,7 @@ def unix_screen():
     sleep(.5)
     same_line_teletype("ls -l\n")
     sleep(.25)
-    #print(f"adventure\ncanyon\ndnd\nDND\ndungeon\nchess\nspace_travel\nsauengard\n")
+
     print(f"-rwxr--r--  1  {user}  {user}    1479 Jun 25 09:50 adventure\n"
           f"-rwxr--r--  1  {user}  {user}    1479 Jul 15 06:45 canyon\n"
           f"-rwxr--r--  1  {user}  {user}    1479 Aug 05 19:20 dnd\n"

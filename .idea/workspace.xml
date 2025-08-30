@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds">
-      <change beforePath="$PROJECT_DIR$/.idea/OpenBSD_Sauengard.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/OpenBSD_Sauengard.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_8_28_25__8_07_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_8_28_25__8_07_AM__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/player_module.py" afterDir="false" />
-    </list>
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="Minor" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -211,7 +205,23 @@
       <option name="project" value="LOCAL" />
       <updated>1756564168877</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Added cross-platform for pause, esc key interrupt.&#10;Cleaned up code.">
+      <option name="closed" value="true" />
+      <created>1756584697520</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1756584697520</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Minor">
+      <option name="closed" value="true" />
+      <created>1756584798123</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1756584798123</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -235,6 +245,8 @@
     <MESSAGE value="Cleanup" />
     <MESSAGE value="Code Cleanup" />
     <MESSAGE value="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds" />
+    <MESSAGE value="Added cross-platform for pause, esc key interrupt.&#10;Cleaned up code." />
+    <MESSAGE value="Minor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor" />
   </component>
 </project>

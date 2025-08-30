@@ -15,15 +15,21 @@ creation, an epic quest, and leveling. It also features immersive atmospherics, 
 
 ## Development:
 
-I have added background music and sound effecrs licensed under the Creative Commons
+I have added background music and sound effects licensed under the Creative Commons
 license, and the game should now be fully cross-compatible on:
 * OpenBSD (of course)
 * GNU/Linux
 * Windows
+* FreeBSD needs testing, as I do not have any machines running it.
+* Please email me with any issues.
 ---
 
 ## Prerequisites
 
+- **OpenBSD**: `aucat` (base system, already installed)
+- **FreeBSD**: `wavplay` (preferred) or `play` (SoX package)
+- **Linux**: `aplay` (ALSA utils package)
+- **Windows**: built-in `winsound` (no extra install needed)
 - Git
 - Git LFS
 - Python 3 (included by default in OpenBSD 7.7)

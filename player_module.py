@@ -819,54 +819,88 @@ def augmentation_intro():
     pause()
 
 
-# ################## Sound Stack: #########################
+# # ################# Cross-Platform Sound Stack: #########################
+#
+#
 # class SoundPlayer:
-#     # Encapsulates sound state for asynchronous playback,
-#     # looping, and mute/unmute via stop/start.
+#
+#     # Encapsulates asynchronous sound playback, looping, and mute/unmute.
+#     # Should Work on OpenBSD (aucat), Linux (aplay), and Windows (winsound).
 #
 #     def __init__(self):
 #         self._proc: subprocess.Popen | None = None
 #         self._loop_thread: threading.Thread | None = None
 #         self._stop_event = threading.Event()
 #         self._muted = False
+#         self._platform = platform.system()
 #         atexit.register(self.stop)
 #
 #     def _resolve_sound_path(self, sound_file: str) -> Path:
 #         # Return the full path to the sound file in ./sound directory.
 #         return Path(__file__).with_name("sound") / sound_file
 #
+#     def _get_player_cmd(self, path: Path) -> list[str] | None:
+#         # Return platform-appropriate command for subprocess playback, or None for Windows.
+#         if self._platform == "OpenBSD":
+#             return ["aucat", "-i", str(path)]
+#         elif self._platform == "Linux":
+#             return ["aplay", str(path)]
+#         elif self._platform == "Windows":
+#             return None  # handled by winsound
+#         else:
+#             raise RuntimeError(f"Unsupported platform for sound playback: {self._platform}")
+#
 #     def _launch_once(self, path: Path):
-#         # Play a sound file once asynchronously via aucat.
+#         # Play a sound file once asynchronously.
+#         if self._muted:
+#             return
+#
+#         if self._platform == "Windows":
+#             try:
+#                 winsound.PlaySound(str(path), winsound.SND_FILENAME | winsound.SND_ASYNC)
+#             except RuntimeError as e:
+#                 print(f"[sound] Windows playback error: {e}")
+#             return
+#
+#         cmd = self._get_player_cmd(path)
 #         try:
 #             self._proc = subprocess.Popen(
-#                 ["aucat", "-i", str(path)],
+#                 cmd,
 #                 stdout=subprocess.DEVNULL,
 #                 stderr=subprocess.DEVNULL,
 #                 close_fds=True,
+#                 start_new_session=True,  # Ctrl-C safe
 #             )
 #         except FileNotFoundError:
-#             print("Error: 'aucat' not found. Install/enable sndio utilities.")
-#         except Exception as e:
-#             print(f"Error starting playback: {e}")
+#             print(f"[sound] Command '{cmd[0]}' not found. Install/enable it for your platform.")
+#         except OSError as e:
+#             print(f"[sound] Error starting playback: {e}")
 #
 #     def stop(self):
-#         # Stop any current/looping playback completely.
+#         # Stop any current or looping playback immediately.
 #         self._stop_event.set()
 #
-#         if self._proc and self._proc.poll() is None:
+#         if self._platform == "Windows":
 #             try:
-#                 self._proc.terminate()
-#             except OSError:
+#                 winsound.PlaySound(None, winsound.SND_PURGE)
+#             except RuntimeError:
 #                 pass
-#         self._proc = None
+#         else:
+#             if self._proc and self._proc.poll() is None:
+#                 try:
+#                     self._proc.terminate()
+#                 except OSError:
+#                     pass
+#             self._proc = None
 #
+#         # Wait for any loop thread to finish
 #         t = self._loop_thread
 #         if t and t.is_alive() and t is not threading.current_thread():
 #             t.join(timeout=1.0)
 #         self._loop_thread = None
 #
 #     def play(self, sound_file: str):
-#         # Play a sound file once, asynchronously.
+#         # Play a sound file once asynchronously.
 #         if self._muted:
 #             return
 #         path = self._resolve_sound_path(sound_file)
@@ -877,7 +911,7 @@ def augmentation_intro():
 #         self._launch_once(path)
 #
 #     def loop(self, sound_file: str):
-#         # Play a sound file asynchronously in a continuous loop.
+#         """Play a sound file asynchronously in a continuous loop."""
 #         path = self._resolve_sound_path(sound_file)
 #         if not path.exists():
 #             print(f"[sound] {path} not found, skipping playback.")
@@ -889,22 +923,33 @@ def augmentation_intro():
 #         def loop_runner():
 #             while not self._stop_event.is_set() and not self._muted:
 #                 self._launch_once(path)
-#                 proc = self._proc
-#                 if proc is None:
+#
+#                 if self._platform == "Windows":
+#                     # winsound loop handled separately
+#                     while not self._stop_event.is_set() and not self._muted:
+#                         threading.Event().wait(0.2)
+#                     self.stop()
 #                     break
-#                 while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
-#                     try:
-#                         proc.wait(timeout=0.2)
-#                     except subprocess.TimeoutExpired:
-#                         pass
+#                 else:
+#                     proc = self._proc
+#                     if proc is None:
+#                         break
+#                     while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
+#                         try:
+#                             proc.wait(timeout=0.2)
+#                         except subprocess.TimeoutExpired:
+#                             pass
+#                         except KeyboardInterrupt:
+#                             self.stop()
+#                             raise
 #
 #         t = threading.Thread(target=loop_runner, daemon=True)
 #         self._loop_thread = t
 #         t.start()
 #
-#     # --- Mute control (stop/start) ---
+#     # --- Mute control ---
 #     def mute(self):
-#         # Mute playback immediately by stopping sound.
+#         # Mute playback immediately without losing loop state.
 #         self._muted = True
 #         self.stop()
 #
@@ -914,11 +959,11 @@ def augmentation_intro():
 #
 #     @property
 #     def muted(self) -> bool:
-#         """Public read-only property for mute state."""
+#         # Public read-only property for mute state.
 #         return self._muted
 #
 #
-# # --- module-level instance for drop-in API ---
+# # --- Module-level drop-in API ---
 # _player = SoundPlayer()
 # stop_sound = _player.stop
 # sound_player = _player.play
@@ -926,25 +971,30 @@ def augmentation_intro():
 # mute_sound = _player.mute
 # unmute_sound = _player.unmute
 #
-# # --- convenience toggle ---
+#
+# # --- Convenience toggle ---
 # def toggle_mute():
 #     # Toggle mute/unmute. Returns True if muted, False if unmuted.
 #     if _player.muted:
 #         _player.unmute()
-#         return False  # unmuted
+#         return False
 #     else:
 #         _player.mute()
-#         return True   # muted
-# #######################END SOUND STACK############################
+#         return True
+#
+#
+# # ######################END SOUND STACK############################
 
 
 # ################# Cross-Platform Sound Stack: #########################
 
-
 class SoundPlayer:
-
     # Encapsulates asynchronous sound playback, looping, and mute/unmute.
-    # Should Work on OpenBSD (aucat), Linux (aplay), and Windows (winsound).
+    # Supports:
+    #   - OpenBSD: aucat
+    #   - FreeBSD: wavplay (preferred), play (SoX fallback) (Fingers crossed- I have no FreeBSD machines!)
+    #   - Linux: aplay
+    #   - Windows: winsound
 
     def __init__(self):
         self._proc: subprocess.Popen | None = None
@@ -955,22 +1005,29 @@ class SoundPlayer:
         atexit.register(self.stop)
 
     def _resolve_sound_path(self, sound_file: str) -> Path:
-        # Return the full path to the sound file in ./sound directory.
         return Path(__file__).with_name("sound") / sound_file
 
     def _get_player_cmd(self, path: Path) -> list[str] | None:
-        # Return platform-appropriate command for subprocess playback, or None for Windows.
         if self._platform == "OpenBSD":
             return ["aucat", "-i", str(path)]
+        elif self._platform == "FreeBSD":
+            # Prefer wavplay, fall back to play (SoX)
+            for cmd in (["wavplay", str(path)], ["play", str(path)]):
+                if subprocess.call(
+                    ["which", cmd[0]],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                ) == 0:
+                    return cmd
+            print("[sound] Neither wavplay nor play (SoX) found. Install one to enable sound.")
+            return None
         elif self._platform == "Linux":
             return ["aplay", str(path)]
         elif self._platform == "Windows":
-            return None  # handled by winsound
+            return None
         else:
-            raise RuntimeError(f"Unsupported platform for sound playback: {self._platform}")
+            raise RuntimeError(f"Unsupported platform: {self._platform}")
 
     def _launch_once(self, path: Path):
-        # Play a sound file once asynchronously.
         if self._muted:
             return
 
@@ -982,13 +1039,15 @@ class SoundPlayer:
             return
 
         cmd = self._get_player_cmd(path)
+        if not cmd:
+            return
         try:
             self._proc = subprocess.Popen(
                 cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 close_fds=True,
-                start_new_session=True,  # Ctrl-C safe
+                start_new_session=True,
             )
         except FileNotFoundError:
             print(f"[sound] Command '{cmd[0]}' not found. Install/enable it for your platform.")
@@ -996,7 +1055,6 @@ class SoundPlayer:
             print(f"[sound] Error starting playback: {e}")
 
     def stop(self):
-        # Stop any current or looping playback immediately.
         self._stop_event.set()
 
         if self._platform == "Windows":
@@ -1012,14 +1070,12 @@ class SoundPlayer:
                     pass
             self._proc = None
 
-        # Wait for any loop thread to finish
         t = self._loop_thread
         if t and t.is_alive() and t is not threading.current_thread():
             t.join(timeout=1.0)
         self._loop_thread = None
 
     def play(self, sound_file: str):
-        # Play a sound file once asynchronously.
         if self._muted:
             return
         path = self._resolve_sound_path(sound_file)
@@ -1030,7 +1086,6 @@ class SoundPlayer:
         self._launch_once(path)
 
     def loop(self, sound_file: str):
-        """Play a sound file asynchronously in a continuous loop."""
         path = self._resolve_sound_path(sound_file)
         if not path.exists():
             print(f"[sound] {path} not found, skipping playback.")
@@ -1044,7 +1099,6 @@ class SoundPlayer:
                 self._launch_once(path)
 
                 if self._platform == "Windows":
-                    # winsound loop handled separately
                     while not self._stop_event.is_set() and not self._muted:
                         threading.Event().wait(0.2)
                     self.stop()
@@ -1066,19 +1120,15 @@ class SoundPlayer:
         self._loop_thread = t
         t.start()
 
-    # --- Mute control ---
     def mute(self):
-        # Mute playback immediately without losing loop state.
         self._muted = True
         self.stop()
 
     def unmute(self):
-        # Unmute: future playback works normally.
         self._muted = False
 
     @property
     def muted(self) -> bool:
-        # Public read-only property for mute state.
         return self._muted
 
 
@@ -1091,16 +1141,13 @@ mute_sound = _player.mute
 unmute_sound = _player.unmute
 
 
-# --- Convenience toggle ---
 def toggle_mute():
-    # Toggle mute/unmute. Returns True if muted, False if unmuted.
     if _player.muted:
         _player.unmute()
         return False
     else:
         _player.mute()
         return True
-
 
 # ######################END SOUND STACK############################
 
@@ -1135,8 +1182,6 @@ def floppy_insert_and_load():
     sound_player('floppy_insert.wav')
     sleep(1)
     sound_player_loop('floppy_rw.wav')
-    # floppy_rw()
-    # sound_player('floppy_insert_and_load.wav')
 
 
 def sad_cello_theme():

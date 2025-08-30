@@ -19,7 +19,11 @@ import itertools
 import termios
 import tty
 import select
-
+import platform
+if os.name == 'nt':
+    import msvcrt  # Windows-only key press detection
+if os.name == 'nt':
+    import winsound  # Windows-only sound
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
@@ -139,21 +143,25 @@ def unix_screen():
                  "don_daglow"]
     user = random.choice(user_list)
     cls()
-    sleep(2)
     stop_sound()
+    hd_powerup()
+
+    sleep(2)
     print("digital PDP 11/23 PLUS")
     sleep(.5)
     cls()
     same_line_print("BOOT> ")
-    sleep(1.5)
-    same_line_teletype("DU 0\n")
     sleep(.5)
+    #clacky_keyboard_short()
+    #sleep(.25)
+    same_line_print("DU 0\n")
+    sleep(.25)
     print("73Boot from ra(0,0,0) at 0172150")
     sleep(.5)
     print(":\n: ra(0,0,0)unix")
-    sleep(.5)
+    sleep(.25)
     print("Boot: bootdev=02400 bootcsr=0172150")  # I'm curious about what 'bootcsr' means.
-    sleep(.5)
+    sleep(.25)
     print("total real memory       = 1024000")
     sleep(.25)
     print("total available memory  = 901068\n")
@@ -162,9 +170,9 @@ def unix_screen():
     print("(Bell Labs internal USG UNIX 5.0 codebase. *Not for re-distribution*)")
     print("Copyright (c) 1983 AT&T")
     print("All Rights Reserved")
-    sleep(1.5)
+    sleep(.5)
     same_line_print("The system is coming up.  ")
-    sleep(1)
+    sleep(.5)
     same_line_print("Please wait. ")
     spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD.
     cls()
@@ -194,14 +202,17 @@ def unix_screen():
     clacky_keyboard_short()
     sleep(.5)
     same_line_teletype("cd /usr/games\n")
+    stop_sound()
     sleep(.5)
     same_line_print("$ ")
     sleep(1.5)
     clacky_keyboard_short()
-    sleep(.5)
-    same_line_teletype("ls -l\n")
     sleep(.25)
-
+    same_line_teletype("ls -l\n")
+    stop_sound()
+    sleep(.25)
+    hd_spinup()
+    sleep(1.5)
     print(f"-rwxr--r--  1  {user}  {user}    1479 Jun 25 09:50 adventure\n"
           f"-rwxr--r--  1  {user}  {user}    1479 Jul 15 06:45 canyon\n"
           f"-rwxr--r--  1  {user}  {user}    1479 Aug 05 19:20 dnd\n"
@@ -215,6 +226,7 @@ def unix_screen():
     sleep(.5)
     same_line_teletype("./sauengard\n")
     print("\n")
+    hd_spinup()
     sleep(2)
 
 
@@ -438,38 +450,113 @@ def convert_list_to_string_with_and(list1):
 
 
 
+# def pause():
+#     # Press any key to continue
+#     if os.name == 'nt':
+#         os.system('pause')
+#     else:
+#         fd = sys.stdin.fileno()
+#
+#         # Flush stdin to prevent buffered input from triggering immediately
+#         try:
+#             termios.tcflush(fd, termios.TCIFLUSH)
+#         except OSError:
+#             pass
+#
+#         print("Press any key to continue . . . ", end='', flush=True)
+#
+#         # Save current terminal settings
+#         old_settings = termios.tcgetattr(fd)
+#         try:
+#             # Switch terminal to raw mode to read a single character immediately
+#             tty.setraw(fd)
+#
+#             # Wait until a key is available
+#             while True:
+#                 rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+#                 if rlist:
+#                     sys.stdin.read(1)  # read one character
+#                     break
+#         finally:
+#             # Always restore terminal settings
+#             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+#
+#         print()  # move to next line after keypress
+
+
+# def pause():
+#     """Wait for a single key press on Windows, Linux, or OpenBSD."""
+#     if os.name == 'nt':
+#         # Windows
+#         import msvcrt
+#         print("Press any key to continue . . . ", end='', flush=True)
+#         msvcrt.getch()
+#         print()
+#     else:
+#         # POSIX (Linux, macOS, OpenBSD)
+#         try:
+#             fd = sys.stdin.fileno()
+#             try:
+#                 termios.tcflush(fd, termios.TCIFLUSH)
+#             except OSError:
+#                 # stdin not a terminal; ignore flush
+#                 pass
+#
+#             print("Press any key to continue . . . ", end='', flush=True)
+#             old_settings = termios.tcgetattr(fd)
+#             try:
+#                 tty.setraw(fd)
+#                 while True:
+#                     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+#                     if rlist:
+#                         sys.stdin.read(1)
+#                         break
+#             finally:
+#                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+#
+#             print()
+#
+#         except (OSError, termios.error):
+#             # Fallback for non-terminal stdin
+#             input("Press Enter to continue . . . ")
+
+
 def pause():
-    # Press any key to continue
+    """Wait for a single key press on Windows, Linux, macOS, or OpenBSD."""
     if os.name == 'nt':
-        os.system('pause')
-    else:
-        fd = sys.stdin.fileno()
-
-        # Flush stdin to prevent buffered input from triggering immediately
-        try:
-            termios.tcflush(fd, termios.TCIFLUSH)
-        except OSError:
-            pass
-
+        # Windows
         print("Press any key to continue . . . ", end='', flush=True)
-
-        # Save current terminal settings
-        old_settings = termios.tcgetattr(fd)
+        msvcrt.getch()
+        print()
+    else:
+        # POSIX (Linux, macOS, OpenBSD)
         try:
-            # Switch terminal to raw mode to read a single character immediately
-            tty.setraw(fd)
+            fd = sys.stdin.fileno()
+            try:
+                termios.tcflush(fd, termios.TCIFLUSH)
+            except OSError:
+                # stdin is not a terminal; ignore flush
+                pass
 
-            # Wait until a key is available
-            while True:
-                rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-                if rlist:
-                    sys.stdin.read(1)  # read one character
-                    break
-        finally:
-            # Always restore terminal settings
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            print("Press any key to continue . . . ", end='', flush=True)
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(fd)
+                while True:
+                    rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+                    if rlist:
+                        sys.stdin.read(1)  # read a single character
+                        break
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-        print()  # move to next line after keypress
+            print()
+
+        except (OSError, termios.error):
+            # Fallback for non-terminal stdin
+            input("Press Enter to continue . . . ")
+
+
 
 def cls():
     #for cross-platform compatibility
@@ -733,54 +820,207 @@ def augmentation_intro():
     pause()
 
 
-################## Sound Stack: #########################
+# ################## Sound Stack: #########################
+# class SoundPlayer:
+#     # Encapsulates sound state for asynchronous playback,
+#     # looping, and mute/unmute via stop/start.
+#
+#     def __init__(self):
+#         self._proc: subprocess.Popen | None = None
+#         self._loop_thread: threading.Thread | None = None
+#         self._stop_event = threading.Event()
+#         self._muted = False
+#         atexit.register(self.stop)
+#
+#     def _resolve_sound_path(self, sound_file: str) -> Path:
+#         # Return the full path to the sound file in ./sound directory.
+#         return Path(__file__).with_name("sound") / sound_file
+#
+#     def _launch_once(self, path: Path):
+#         # Play a sound file once asynchronously via aucat.
+#         try:
+#             self._proc = subprocess.Popen(
+#                 ["aucat", "-i", str(path)],
+#                 stdout=subprocess.DEVNULL,
+#                 stderr=subprocess.DEVNULL,
+#                 close_fds=True,
+#             )
+#         except FileNotFoundError:
+#             print("Error: 'aucat' not found. Install/enable sndio utilities.")
+#         except Exception as e:
+#             print(f"Error starting playback: {e}")
+#
+#     def stop(self):
+#         # Stop any current/looping playback completely.
+#         self._stop_event.set()
+#
+#         if self._proc and self._proc.poll() is None:
+#             try:
+#                 self._proc.terminate()
+#             except OSError:
+#                 pass
+#         self._proc = None
+#
+#         t = self._loop_thread
+#         if t and t.is_alive() and t is not threading.current_thread():
+#             t.join(timeout=1.0)
+#         self._loop_thread = None
+#
+#     def play(self, sound_file: str):
+#         # Play a sound file once, asynchronously.
+#         if self._muted:
+#             return
+#         path = self._resolve_sound_path(sound_file)
+#         if not path.exists():
+#             print(f"[sound] {path} not found, skipping playback.")
+#             return
+#         self.stop()
+#         self._launch_once(path)
+#
+#     def loop(self, sound_file: str):
+#         # Play a sound file asynchronously in a continuous loop.
+#         path = self._resolve_sound_path(sound_file)
+#         if not path.exists():
+#             print(f"[sound] {path} not found, skipping playback.")
+#             return
+#
+#         self.stop()
+#         self._stop_event.clear()
+#
+#         def loop_runner():
+#             while not self._stop_event.is_set() and not self._muted:
+#                 self._launch_once(path)
+#                 proc = self._proc
+#                 if proc is None:
+#                     break
+#                 while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
+#                     try:
+#                         proc.wait(timeout=0.2)
+#                     except subprocess.TimeoutExpired:
+#                         pass
+#
+#         t = threading.Thread(target=loop_runner, daemon=True)
+#         self._loop_thread = t
+#         t.start()
+#
+#     # --- Mute control (stop/start) ---
+#     def mute(self):
+#         # Mute playback immediately by stopping sound.
+#         self._muted = True
+#         self.stop()
+#
+#     def unmute(self):
+#         # Unmute: future playback works normally.
+#         self._muted = False
+#
+#     @property
+#     def muted(self) -> bool:
+#         """Public read-only property for mute state."""
+#         return self._muted
+#
+#
+# # --- module-level instance for drop-in API ---
+# _player = SoundPlayer()
+# stop_sound = _player.stop
+# sound_player = _player.play
+# sound_player_loop = _player.loop
+# mute_sound = _player.mute
+# unmute_sound = _player.unmute
+#
+# # --- convenience toggle ---
+# def toggle_mute():
+#     # Toggle mute/unmute. Returns True if muted, False if unmuted.
+#     if _player.muted:
+#         _player.unmute()
+#         return False  # unmuted
+#     else:
+#         _player.mute()
+#         return True   # muted
+# #######################END SOUND STACK############################
+
+
+################## Cross-Platform Sound Stack: #########################
+
+
 class SoundPlayer:
-    # Encapsulates sound state for asynchronous playback,
-    # looping, and mute/unmute via stop/start.
+
+    # Encapsulates asynchronous sound playback, looping, and mute/unmute.
+    # Should Work on OpenBSD (aucat), Linux (aplay), and Windows (winsound).
 
     def __init__(self):
         self._proc: subprocess.Popen | None = None
         self._loop_thread: threading.Thread | None = None
         self._stop_event = threading.Event()
         self._muted = False
+        self._platform = platform.system()
         atexit.register(self.stop)
 
     def _resolve_sound_path(self, sound_file: str) -> Path:
         # Return the full path to the sound file in ./sound directory.
         return Path(__file__).with_name("sound") / sound_file
 
+    def _get_player_cmd(self, path: Path) -> list[str] | None:
+        # Return platform-appropriate command for subprocess playback, or None for Windows.
+        if self._platform == "OpenBSD":
+            return ["aucat", "-i", str(path)]
+        elif self._platform == "Linux":
+            return ["aplay", str(path)]
+        elif self._platform == "Windows":
+            return None  # handled by winsound
+        else:
+            raise RuntimeError(f"Unsupported platform for sound playback: {self._platform}")
+
     def _launch_once(self, path: Path):
-        # Play a sound file once asynchronously via aucat.
+        # Play a sound file once asynchronously.
+        if self._muted:
+            return
+
+        if self._platform == "Windows":
+            try:
+                winsound.PlaySound(str(path), winsound.SND_FILENAME | winsound.SND_ASYNC)
+            except RuntimeError as e:
+                print(f"[sound] Windows playback error: {e}")
+            return
+
+        cmd = self._get_player_cmd(path)
         try:
             self._proc = subprocess.Popen(
-                ["aucat", "-i", str(path)],
+                cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 close_fds=True,
+                start_new_session=True,  # Ctrl-C safe
             )
         except FileNotFoundError:
-            print("Error: 'aucat' not found. Install/enable sndio utilities.")
-        except Exception as e:
-            print(f"Error starting playback: {e}")
+            print(f"[sound] Command '{cmd[0]}' not found. Install/enable it for your platform.")
+        except OSError as e:
+            print(f"[sound] Error starting playback: {e}")
 
     def stop(self):
-        # Stop any current/looping playback completely.
+        # Stop any current or looping playback immediately.
         self._stop_event.set()
 
-        if self._proc and self._proc.poll() is None:
+        if self._platform == "Windows":
             try:
-                self._proc.terminate()
-            except OSError:
+                winsound.PlaySound(None, winsound.SND_PURGE)
+            except RuntimeError:
                 pass
-        self._proc = None
+        else:
+            if self._proc and self._proc.poll() is None:
+                try:
+                    self._proc.terminate()
+                except OSError:
+                    pass
+            self._proc = None
 
+        # Wait for any loop thread to finish
         t = self._loop_thread
         if t and t.is_alive() and t is not threading.current_thread():
             t.join(timeout=1.0)
         self._loop_thread = None
 
     def play(self, sound_file: str):
-        # Play a sound file once, asynchronously.
+        # Play a sound file once asynchronously.
         if self._muted:
             return
         path = self._resolve_sound_path(sound_file)
@@ -791,7 +1031,7 @@ class SoundPlayer:
         self._launch_once(path)
 
     def loop(self, sound_file: str):
-        # Play a sound file asynchronously in a continuous loop.
+        """Play a sound file asynchronously in a continuous loop."""
         path = self._resolve_sound_path(sound_file)
         if not path.exists():
             print(f"[sound] {path} not found, skipping playback.")
@@ -803,22 +1043,33 @@ class SoundPlayer:
         def loop_runner():
             while not self._stop_event.is_set() and not self._muted:
                 self._launch_once(path)
-                proc = self._proc
-                if proc is None:
+
+                if self._platform == "Windows":
+                    # winsound loop handled separately
+                    while not self._stop_event.is_set() and not self._muted:
+                        threading.Event().wait(0.2)
+                    self.stop()
                     break
-                while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
-                    try:
-                        proc.wait(timeout=0.2)
-                    except subprocess.TimeoutExpired:
-                        pass
+                else:
+                    proc = self._proc
+                    if proc is None:
+                        break
+                    while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
+                        try:
+                            proc.wait(timeout=0.2)
+                        except subprocess.TimeoutExpired:
+                            pass
+                        except KeyboardInterrupt:
+                            self.stop()
+                            raise
 
         t = threading.Thread(target=loop_runner, daemon=True)
         self._loop_thread = t
         t.start()
 
-    # --- Mute control (stop/start) ---
+    # --- Mute control ---
     def mute(self):
-        # Mute playback immediately by stopping sound.
+        # Mute playback immediately without losing loop state.
         self._muted = True
         self.stop()
 
@@ -828,11 +1079,11 @@ class SoundPlayer:
 
     @property
     def muted(self) -> bool:
-        """Public read-only property for mute state."""
+        # Public read-only property for mute state.
         return self._muted
 
 
-# --- module-level instance for drop-in API ---
+# --- Module-level drop-in API ---
 _player = SoundPlayer()
 stop_sound = _player.stop
 sound_player = _player.play
@@ -840,21 +1091,30 @@ sound_player_loop = _player.loop
 mute_sound = _player.mute
 unmute_sound = _player.unmute
 
-# --- convenience toggle ---
+# --- Convenience toggle ---
 def toggle_mute():
     # Toggle mute/unmute. Returns True if muted, False if unmuted.
     if _player.muted:
         _player.unmute()
-        return False  # unmuted
+        return False
     else:
         _player.mute()
-        return True   # muted
+        return True
+
 #######################END SOUND STACK############################
+
 
 #######################.wav file playback#########################
 def gong():
     # notice the gong is not looped!
     sound_player('gong.wav')
+
+def hd_powerup():
+    sound_player('hd-powerup.wav')
+
+
+def hd_spinup():
+    sound_player_loop('hd-spinup.wav')
 
 
 def pc_powerup():

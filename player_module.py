@@ -16,20 +16,24 @@ from dungeons import dungeon_dict
 from monster_module import monster_dict, king_boss_list, undead_prophet_list, WickedQueenJannbrielle
 from pathlib import Path
 import itertools
-import termios
-import tty
 import select
 import platform
-if os.name == 'nt':
-    import msvcrt  # Windows-only key press detection
-if os.name == 'nt':
-    import winsound  # Windows-only sound
+
+# Platform-specific imports
+if os.name == "nt":  # Windows
+    import msvcrt  # key press detection
+    import winsound  # sound support
+else:  # POSIX (OpenBSD, Linux, macOS, etc.)
+    import termios
+    import tty
+
 
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
 # when passing a list as an argument, remember to use the * unpacking operator
 # seq = [1, 2, 3]
 # foo(*seq)
+
 
 def os_check():
     cls()
@@ -152,8 +156,8 @@ def unix_screen():
     cls()
     same_line_print("BOOT> ")
     sleep(.5)
-    #clacky_keyboard_short()
-    #sleep(.25)
+    # clacky_keyboard_short()
+    # sleep(.25)
     same_line_print("DU 0\n")
     sleep(.25)
     print("73Boot from ra(0,0,0) at 0172150")
@@ -287,38 +291,75 @@ def spinner(number_of_spins):
     spin_cycle = itertools.cycle(['-', '/', '|', '\\'])
 
     for i in range(number_of_spins):
-        sys.stdout.write(next(spin_cycle))   #
+        sys.stdout.write(next(spin_cycle))  #
         sys.stdout.flush()
         sys.stdout.write('\b')  # erase the last written char
         sleep(.005)
 
 
+# def escape_key_interrupt_teletype(message):
+#     # Detect ESC immediately (no Enter needed).
+#
+#     fd = sys.stdin.fileno()
+#     old_settings = termios.tcgetattr(fd)
+#
+#     # Copy settings we can modify
+#     new_settings = termios.tcgetattr(fd)
+#     # Local flags: disable canonical mode (ICANON) and echo (ECHO)
+#     new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
+#     termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
+#
+#     try:
+#         dr, _, _ = select.select([sys.stdin], [], [], 0)
+#         if dr:
+#             ch = sys.stdin.read(1)
+#             if ch == '\x1b':  # ESC key
+#                 print("\033c", end="")  # clear screen
+#                 print()
+#                 print(message)
+#                 return True
+#     finally:
+#         # Always restore original terminal state
+#         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+#
+#     return False
+
 def escape_key_interrupt_teletype(message):
-    # Detect ESC immediately (no Enter needed).
+    # Detect ESC key without waiting for Enter. Works on Windows and POSIX.
 
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-
-    # Copy settings we can modify
-    new_settings = termios.tcgetattr(fd)
-    # Local flags: disable canonical mode (ICANON) and echo (ECHO)
-    new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
-    termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
-
-    try:
-        dr, _, _ = select.select([sys.stdin], [], [], 0)
-        if dr:
-            ch = sys.stdin.read(1)
-            if ch == '\x1b':  # ESC key
-                print("\033c", end="")  # clear screen
+    if os.name == 'nt':  # Windows
+        if msvcrt.kbhit():
+            key = msvcrt.getch()
+            if key == b'\x1b':  # ESC
+                os.system('cls')  # clear screen
                 print()
                 print(message)
                 return True
-    finally:
-        # Always restore original terminal state
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return False
 
-    return False
+    else:  # POSIX (OpenBSD, Linux, macOS)
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+
+        # Copy settings we can modify
+        new_settings = termios.tcgetattr(fd)
+        new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
+        termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
+
+        try:
+            dr, _, _ = select.select([sys.stdin], [], [], 0)
+            if dr:
+                ch = sys.stdin.read(1)
+                if ch == '\x1b':  # ESC
+                    print("\033c", end="")  # clear screen (ANSI escape)
+                    print()
+                    print(message)
+                    return True
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        return False
+
 
 def same_line_print(string):
     # simple function that does not add a carriage return, allowing next item to be printed on same line
@@ -346,7 +387,7 @@ def teletype(message):
     for each_character in message:
         sys.stdout.write(each_character)
         sys.stdout.flush()
-        sleep(0.00001)  # 0.0065, 0.01 all seem good
+        sleep(0.0065)  # 0.0065, 0.01 all seem good
         if escape_key_interrupt_teletype(message):
             return
 
@@ -401,7 +442,6 @@ def game_splash():
             teletype_txt_file('tips.txt')
             pause()
 
-
         elif choice == 'c':
 
             print_txt_file('credits.txt')
@@ -449,46 +489,10 @@ def convert_list_to_string_with_and(list1):
     return readable_list
 
 
-
 # def pause():
-#     # Press any key to continue
-#     if os.name == 'nt':
-#         os.system('pause')
-#     else:
-#         fd = sys.stdin.fileno()
-#
-#         # Flush stdin to prevent buffered input from triggering immediately
-#         try:
-#             termios.tcflush(fd, termios.TCIFLUSH)
-#         except OSError:
-#             pass
-#
-#         print("Press any key to continue . . . ", end='', flush=True)
-#
-#         # Save current terminal settings
-#         old_settings = termios.tcgetattr(fd)
-#         try:
-#             # Switch terminal to raw mode to read a single character immediately
-#             tty.setraw(fd)
-#
-#             # Wait until a key is available
-#             while True:
-#                 rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-#                 if rlist:
-#                     sys.stdin.read(1)  # read one character
-#                     break
-#         finally:
-#             # Always restore terminal settings
-#             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-#
-#         print()  # move to next line after keypress
-
-
-# def pause():
-#     """Wait for a single key press on Windows, Linux, or OpenBSD."""
+#     """Wait for a single key press on Windows, Linux, macOS, or OpenBSD."""
 #     if os.name == 'nt':
 #         # Windows
-#         import msvcrt
 #         print("Press any key to continue . . . ", end='', flush=True)
 #         msvcrt.getch()
 #         print()
@@ -499,7 +503,7 @@ def convert_list_to_string_with_and(list1):
 #             try:
 #                 termios.tcflush(fd, termios.TCIFLUSH)
 #             except OSError:
-#                 # stdin not a terminal; ignore flush
+#                 # stdin is not a terminal; ignore flush
 #                 pass
 #
 #             print("Press any key to continue . . . ", end='', flush=True)
@@ -509,7 +513,7 @@ def convert_list_to_string_with_and(list1):
 #                 while True:
 #                     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
 #                     if rlist:
-#                         sys.stdin.read(1)
+#                         sys.stdin.read(1)  # read a single character
 #                         break
 #             finally:
 #                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
@@ -522,7 +526,7 @@ def convert_list_to_string_with_and(list1):
 
 
 def pause():
-    """Wait for a single key press on Windows, Linux, macOS, or OpenBSD."""
+    # Wait for a single key press on Windows, Linux, macOS, or OpenBSD.
     if os.name == 'nt':
         # Windows
         print("Press any key to continue . . . ", end='', flush=True)
@@ -530,36 +534,30 @@ def pause():
         print()
     else:
         # POSIX (Linux, macOS, OpenBSD)
+        print("Press any key to continue . . . ", end='', flush=True)
         try:
             fd = sys.stdin.fileno()
             try:
                 termios.tcflush(fd, termios.TCIFLUSH)
             except OSError:
-                # stdin is not a terminal; ignore flush
-                pass
+                pass  # stdin not a terminal
 
-            print("Press any key to continue . . . ", end='', flush=True)
             old_settings = termios.tcgetattr(fd)
             try:
                 tty.setraw(fd)
-                while True:
-                    rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-                    if rlist:
-                        sys.stdin.read(1)  # read a single character
-                        break
+                rlist, _, _ = select.select([sys.stdin], [], [], None)
+                if rlist:
+                    sys.stdin.read(1)  # read a single character
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-
             print()
-
         except (OSError, termios.error):
-            # Fallback for non-terminal stdin
+            # Fallback if stdin isn’t a TTY
             input("Press Enter to continue . . . ")
 
 
-
 def cls():
-    #for cross-platform compatibility
+    # for cross-platform compatibility
     if os.name == 'nt':
         os.system('cls')
 
@@ -939,7 +937,7 @@ def augmentation_intro():
 # #######################END SOUND STACK############################
 
 
-################## Cross-Platform Sound Stack: #########################
+# ################# Cross-Platform Sound Stack: #########################
 
 
 class SoundPlayer:
@@ -1091,6 +1089,7 @@ sound_player_loop = _player.loop
 mute_sound = _player.mute
 unmute_sound = _player.unmute
 
+
 # --- Convenience toggle ---
 def toggle_mute():
     # Toggle mute/unmute. Returns True if muted, False if unmuted.
@@ -1101,13 +1100,15 @@ def toggle_mute():
         _player.mute()
         return True
 
-#######################END SOUND STACK############################
+
+# ######################END SOUND STACK############################
 
 
-#######################.wav file playback#########################
+# ######################.wav file playback#########################
 def gong():
     # notice the gong is not looped!
     sound_player('gong.wav')
+
 
 def hd_powerup():
     sound_player('hd-powerup.wav')
@@ -1175,7 +1176,9 @@ def queen_confrontation_theme():
 
 def final_victory_theme():
     sound_player_loop('final_victory.wav')
-##################END .wav file playback############################
+
+
+# #################END .wav file playback############################
 
 
 class Weapon:
@@ -3149,7 +3152,7 @@ class Player:
             monster.hit_points += self.vozzbozz.hit_points
             monster.experience_award = round(monster.experience_award * 1.25)
 
-        if self. sikira_ally or self.torbron_ally or self.magnus_ally or self.vozzbozz_ally:
+        if self.sikira_ally or self.torbron_ally or self.magnus_ally or self.vozzbozz_ally:
             if monster.to_hit_bonus <= self.acumen:  # consider modifying for balance
                 monster.to_hit_bonus = self.acumen + 1
 
@@ -3835,7 +3838,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + \
-                    self.wisdom_modifier + vulnerability_modifier + level_advantage
+                            self.wisdom_modifier + vulnerability_modifier + level_advantage
                 print(f"Player Base DC = {self.base_dc}\n"
                       f"Wisdom Modifier: {self.wisdom_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -3914,7 +3917,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC = {self.base_dc}\n"
                       f"Wisdom Modifier: {self.wisdom_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -3994,7 +3997,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC = {self.base_dc}\n"
                       f"Wisdom Modifier: {self.wisdom_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -4140,7 +4143,7 @@ class Player:
                         if self.level > monster.level:
                             level_advantage = self.level - monster.level
                         player_dc = self.base_dc + self.acumen + \
-                            self.wisdom_modifier + vulnerability_modifier + level_advantage
+                                    self.wisdom_modifier + vulnerability_modifier + level_advantage
                         print(f"Player base DC = {self.base_dc}\n"
                               f"Wisdom Modifier: {self.wisdom_modifier}\n"
                               f"Acumen: {self.acumen}")
@@ -4256,7 +4259,7 @@ class Player:
                             if self.level > monster.level:
                                 level_advantage = self.level - monster.level
                             player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                                vulnerability_modifier + level_advantage
+                                        vulnerability_modifier + level_advantage
                             print(f"Player base DC = {self.base_dc}\n"
                                   f"Wisdom Modifier: {self.wisdom_modifier}\n"
                                   f"Acumen: {self.acumen}")
@@ -4341,7 +4344,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player DC = {self.base_dc}\n"
                       f"Wisdom Modifier: {self.wisdom_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -4503,7 +4506,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.charisma_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC = {self.base_dc}\n"
                       f"Charisma Modifier: {self.charisma_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -4597,7 +4600,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.intelligence_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC = {self.base_dc}\n"
                       f"Intelligence Modifier: {self.intelligence_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -5138,7 +5141,8 @@ class Player:
             number_of_dice = 20 * critical_bonus
             quantum_hit_die = 6
             damage_to_opponent = dice_roll(number_of_dice, quantum_hit_die) + (1 * number_of_dice) + \
-                dice_roll(number_of_dice, quantum_hit_die) + (1 * number_of_dice)  # 2nd attack=force damage
+                                 dice_roll(number_of_dice, quantum_hit_die) + (
+                                         1 * number_of_dice)  # 2nd attack=force damage
             melee_bonus = dice_roll(self.vozzbozz.acumen, self.vozzbozz.hit_dice)
             total_damage_to_opponent = math.ceil(damage_to_opponent + melee_bonus)
 
@@ -5223,7 +5227,8 @@ class Player:
             quantum_hit_die = 12
             force_dmg_hit_die = 8
             damage_to_opponent = dice_roll(number_of_dice, quantum_hit_die) + (1 * number_of_dice) + \
-                dice_roll(number_of_dice, force_dmg_hit_die) + (1 * number_of_dice)  # 2nd attack = force damage
+                                 dice_roll(number_of_dice, force_dmg_hit_die) + (
+                                         1 * number_of_dice)  # 2nd attack = force damage
             melee_bonus = dice_roll(self.vozzbozz.acumen, self.vozzbozz.hit_dice)
             total_damage_to_opponent = math.ceil(damage_to_opponent + melee_bonus)
             if damage_to_opponent > 0:
@@ -5239,7 +5244,7 @@ class Player:
                 print(f"{number_of_dice}d{quantum_hit_die} + {number_of_dice}d{force_dmg_hit_die} force damage "
                       f"+ 1 per skeleton bludgeoning damage: {damage_to_opponent}")
                 print(f"{self.vozzbozz.acumen}d{self.vozzbozz.hit_dice} Damage Bonus: {melee_bonus}")
-                # print(f"It hits for {total_damage_to_opponent} points of damage..")
+                # print(f"It hits for {total_damage_to_opponent} points of damage...")
                 print(f"The great swarm of armor, axe, sword and spear inflicts "
                       f"{total_damage_to_opponent} points of damage!")
                 pause()
@@ -5297,7 +5302,8 @@ class Player:
             quantum_hit_die = 12
             crushing_die = 8
             damage_to_opponent = dice_roll(number_of_dice, quantum_hit_die) + (1 * number_of_dice) + \
-                dice_roll(number_of_dice, crushing_die) + (1 * number_of_dice)  # 2nd attack = crushing damage
+                                 dice_roll(number_of_dice, crushing_die) + (
+                                         1 * number_of_dice)  # 2nd attack = crushing damage
             melee_bonus = dice_roll(self.vozzbozz.acumen, self.vozzbozz.hit_dice)
             total_damage_to_opponent = math.ceil(damage_to_opponent + melee_bonus)
             if damage_to_opponent > 0:
@@ -5703,7 +5709,7 @@ class Player:
                     sleep(1)
                     print(f"Your hands throb with red-hot Quantum Energy..")
                     sleep(1)
-                    # print(f"The effect takes form but does not to its fullest potential..")
+                    # print(f"The effect takes form but does not to its fullest potential...")
                     print(f"{number_of_dice}d{quantum_hit_die} roll + 2 * number of dice rolled = "
                           f"{damage_to_opponent} (ROUNDED)")
                     # print(f"{self.acumen}d{self.hit_dice} Damage Bonus: {melee_bonus}")
@@ -5794,7 +5800,7 @@ class Player:
                     quantum_hit_die = 12
                     crushing_dmg_die = 8
                     damage_to_opponent = dice_roll(number_of_dice, quantum_hit_die) + (1 * number_of_dice) + \
-                        dice_roll(number_of_dice, crushing_dmg_die) + (1 * number_of_dice)
+                                         dice_roll(number_of_dice, crushing_dmg_die) + (1 * number_of_dice)
                     melee_bonus = dice_roll(self.acumen, self.hit_dice)
                     total_damage_to_opponent = math.ceil(damage_to_opponent + melee_bonus)
                     if damage_to_opponent > 0:
@@ -5910,7 +5916,8 @@ class Player:
                     force_dmg_die = 8
                     no_of_skeletons = dice_roll(number_of_dice, quantum_hit_die)
                     damage_to_opponent = no_of_skeletons + (1 * number_of_dice) + \
-                        dice_roll(number_of_dice, force_dmg_die) + (1 * number_of_dice)  # 3rd attack = bludgeoning
+                                         dice_roll(number_of_dice, force_dmg_die) + (
+                                                 1 * number_of_dice)  # 3rd attack = bludgeoning
                     melee_bonus = dice_roll(self.acumen, self.hit_dice)
                     total_damage_to_opponent = math.ceil(damage_to_opponent + melee_bonus)
                     if damage_to_opponent > 0:
@@ -5926,7 +5933,7 @@ class Player:
                         print(f"{number_of_dice}d{quantum_hit_die} + {number_of_dice}d{force_dmg_die} "
                               f"force damage + 1 per die rolled bludgeoning damage: {damage_to_opponent}")
                         print(f"{self.acumen}d{self.hit_dice} Damage Bonus: {melee_bonus}")
-                        # print(f"It hits for {total_damage_to_opponent} points of damage..")
+                        # print(f"It hits for {total_damage_to_opponent} points of damage...")
                         print(f"The great swarm of armor, axe, sword and spear inflicts "
                               f"{total_damage_to_opponent} points of damage!")
                         pause()
@@ -6033,7 +6040,8 @@ class Player:
                     quantum_hit_die = 12
                     crushing_dmg_die = 8
                     damage_to_opponent = dice_roll(number_of_dice, quantum_hit_die) + (1 * number_of_dice) + \
-                        dice_roll(number_of_dice, crushing_dmg_die) + (1 * number_of_dice)  # 2nd attack = crushing dmg
+                                         dice_roll(number_of_dice, crushing_dmg_die) + (
+                                                 1 * number_of_dice)  # 2nd attack = crushing dmg
                     melee_bonus = dice_roll(self.acumen, self.hit_dice)
                     total_damage_to_opponent = math.ceil(damage_to_opponent + melee_bonus)
                     if damage_to_opponent > 0:
@@ -6373,7 +6381,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC = {self.base_dc}\n"
                       f"Wisdom Modifier: {self.wisdom_modifier}\n"
                       f"Acumen: {self.acumen}")
@@ -6596,7 +6604,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC: {self.base_dc}")
                 print(f"Wisdom modifier: {self.wisdom_modifier}")
                 print(f"Acumen: {self.acumen}")
@@ -6709,7 +6717,7 @@ class Player:
                 if self.level > monster.level:
                     level_advantage = self.level - monster.level
                 player_dc = self.base_dc + self.acumen + self.wisdom_modifier + \
-                    vulnerability_modifier + level_advantage
+                            vulnerability_modifier + level_advantage
                 print(f"Player Base DC: {self.base_dc}")
                 print(f"Wisdom modifier: {self.wisdom_modifier}")
                 print(f"Acumen: {self.acumen}")
@@ -7446,7 +7454,6 @@ class Player:
                 self.sell_blacksmith_items()
                 continue
 
-
             elif blacksmith_choice == 'i':
                 self.inventory()
                 continue
@@ -7993,7 +8000,6 @@ class Player:
         pause()
         cls()
 
-
         if len(self.vanquished_foes):
             vanquished_foes = convert_list_to_string_with_commas_only(self.vanquished_foes)
             teletype(f"'The slayer of {vanquished_foes}...\n...and others besides!'\n")
@@ -8068,7 +8074,7 @@ class Player:
             teletype(f"'The Dark She-Elf makes five..', interjects the bird.\n"
                      f"Magnus briefly looks at Lazarus, and you suddenly deduce it has been the raven who has been "
                      f"eavesdropping in the dungeon\ndepths below and reporting on your victories all this time.\n"
-                     f"Motioning to Si'Kira, he says, 'Ye think yer friend there will lend her sword?'\n" 
+                     f"Motioning to Si'Kira, he says, 'Ye think yer friend there will lend her sword?'\n"
                      f"With a smirk, you respond immediately, 'Without a doubt.'\n")
 
         teletype(f"Magnus looks at you gravely. 'We will be meeting with Tor'Bron outside, and then joining "
@@ -8135,20 +8141,21 @@ class Player:
         cls()
         opening_phrase = f"'Feelin' chatty, love?', queries Jenna in a coy tone."
         random_jenna_business = [f"'I'm a bit busy, here, love..'\n", f"'There's always loot to be found in the "
-                                 "dungeons. Ye can sell what ye don't need, here in town!'\n",
+                                                                      "dungeons. Ye can sell what ye don't need, here in town!'\n",
                                  f"'The Sauengard dungeons "
                                  "were once part of a magnificent kingdom many years ago; Before it became overrun "
                                  "by fiends, brigands and the undead.'\n", f"'Working on yer Charisma will give ye a "
-                                 "better chance for positive outcomes with monsters!'\n", f"'Gaining Constitution "
+                                                                           "better chance for positive outcomes with monsters!'\n",
+                                 f"'Gaining Constitution "
                                  f"will help ye resist poison and necrosis.\nIt also will gain ye hit points and "
                                  f"resist paralyzing effects!'\n",
                                  f"'Wisdom is important for procuring the Weirdness fer Quantum effects, and will "
                                  f"become more important as you progress.'\n", f"'Protection from Evil helps ye "
-                                 f"resist the Quantum Attacks and Paralyzing effects of monsters.'\n",
+                                                                               f"resist the Quantum Attacks and Paralyzing effects of monsters.'\n",
                                  f"'Acumen enhances many things, including initiative, melee"
                                  f" attacks, and Quantum Effects.\nAcumen will increase with your experience "
                                  f"level.'\n", f"'I heard about ancient religious altars in the dungeons.\nThey say "
-                                 f"ye must be strong if ye plan on demolishing them!'\n"]
+                                               f"ye must be strong if ye plan on demolishing them!'\n"]
         if self.dungeon.level == 1:
             self.jennas_level_1_gab(opening_phrase)
         else:

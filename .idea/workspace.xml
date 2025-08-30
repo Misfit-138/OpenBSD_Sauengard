@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="Code Cleanup">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player_module.py" beforeDir="false" afterPath="$PROJECT_DIR$/player_module.py" afterDir="false" />
+    <list default="true" id="7d6c30c1-177c-4c8e-8b52-6874b926dc23" name="Changes" comment="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds">
+      <change beforePath="$PROJECT_DIR$/text/credits3.txt" beforeDir="false" afterPath="$PROJECT_DIR$/text/credits3.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756552480908</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds">
+      <option name="closed" value="true" />
+      <created>1756564168877</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1756564168877</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -215,6 +222,7 @@
     <MESSAGE value="edit typo in installation and running" />
     <MESSAGE value="Cleanup" />
     <MESSAGE value="Code Cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code Cleanup" />
+    <MESSAGE value="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added cross-platform sound (OpenBSD/Linux/Windows)&#10;Added hd sounds" />
   </component>
 </project>

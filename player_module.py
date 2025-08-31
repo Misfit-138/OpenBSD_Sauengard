@@ -7500,6 +7500,10 @@ class Player:
                 self.sell_blacksmith_items()
                 continue
 
+            elif blacksmith_choice == 'm':
+                self.item_management_sub_menu()
+                continue
+
             elif blacksmith_choice == 'i':
                 self.inventory()
                 continue

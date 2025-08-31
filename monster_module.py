@@ -10,6 +10,14 @@ import math
 import os
 import random
 import time
+import sys
+import select
+if os.name == "nt":  # Windows
+    import msvcrt  # key press detection
+
+else:  # POSIX (OpenBSD, Linux, macOS, etc.)
+    import termios
+    import tty
 
 
 def sleep(seconds):
@@ -25,11 +33,41 @@ def dice_roll(no_of_dice, no_of_sides):
     return your_roll_sum
 
 
+# def pause():
+#     if os.name == 'nt':
+#         os.system('pause')
+#     else:
+#         input("Strike [ENTER] to continue. . .")
+
 def pause():
+    # Wait for a single key press on Windows, Linux, macOS, or OpenBSD.
     if os.name == 'nt':
-        os.system('pause')
+        # Windows
+        print("Press any key to continue . . . ", end='', flush=True)
+        msvcrt.getch()
+        print()
     else:
-        input("Strike [ENTER] to continue. . .")
+        # POSIX 
+        print("Press any key to continue . . . ", end='', flush=True)
+        try:
+            fd = sys.stdin.fileno()
+            try:
+                termios.tcflush(fd, termios.TCIFLUSH)
+            except OSError:
+                pass  # stdin not a terminal
+
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(fd)
+                rlist, _, _ = select.select([sys.stdin], [], [], None)
+                if rlist:
+                    sys.stdin.read(1)  # read a single character
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            print()
+        except (OSError, termios.error):
+            # Fallback if stdin isn’t a TTY
+            input("Press Enter to continue . . . ")
 
 
 def convert_list_to_string_with_commas_only(list1):

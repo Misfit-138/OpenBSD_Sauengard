@@ -40,7 +40,7 @@ def dice_roll(no_of_dice, no_of_sides):
 #         input("Strike [ENTER] to continue. . .")
 
 def pause():
-    # Wait for a single key press on Windows, Linux, macOS, or OpenBSD.
+    # Wait for a single key press. Should work on Windows, Linux, macOS, FreeBSD or OpenBSD.
     if os.name == 'nt':
         # Windows
         print("Press any key to continue . . . ", end='', flush=True)

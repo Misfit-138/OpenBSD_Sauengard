@@ -527,7 +527,7 @@ def convert_list_to_string_with_and(list1):
 
 
 def pause():
-    # Wait for a single key press on Windows, Linux, macOS, or OpenBSD.
+    # Wait for a single key press. Should work on Windows, Linux, macOS, FreeBSD or OpenBSD.
     if os.name == 'nt':
         # Windows
         print("Press any key to continue . . . ", end='', flush=True)

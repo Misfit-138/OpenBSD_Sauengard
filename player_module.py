@@ -28,6 +28,13 @@ else:  # POSIX (OpenBSD, Linux, macOS, etc.)
     import tty
 
 
+# Patch __file__ for PyInstaller exe so Path(__file__) calls still work
+if getattr(sys, "frozen", False):
+    _MEIPASS = getattr(sys, "_MEIPASS", None)
+    if _MEIPASS:
+        __file__ = os.path.join(_MEIPASS, "player_module.py")
+
+
 # if you call a function and expect to use a return value, like, by printing it, you must first assign a variable in
 # the call itself!!!
 
@@ -179,7 +186,7 @@ def unix_screen():
     same_line_print("The system is coming up.  ")
     sleep(.5)
     same_line_print("Please wait. ")
-    spinner(100)  # this is anachronistic, but I thought it looked cool, like openBSD.
+    spinner(200)  # this is anachronistic, but I thought it looked cool, like openBSD.
     cls()
     same_line_print("Console Login: ")
     sleep(1)
@@ -217,7 +224,7 @@ def unix_screen():
     stop_sound()
     sleep(.25)
     hd_spinup()
-    sleep(1.5)
+    sleep(2)
     print(f"-rwxr--r--  1  {user}  {user}    1479 Jun 25 09:50 adventure\n"
           f"-rwxr--r--  1  {user}  {user}    1479 Jul 15 06:45 canyon\n"
           f"-rwxr--r--  1  {user}  {user}    1479 Aug 05 19:20 dnd\n"
@@ -246,7 +253,7 @@ def clacky_keyboard_short2():
 def initial_loading_screen():
     cls()
     same_line_print(f"\nLOADING.")
-    dot_dot_dot(20)
+    dot_dot_dot(25)
 
 
 def random_floppy_rw_sound():
@@ -259,7 +266,7 @@ def loading_screen():
     cls()
     random_floppy_rw_sound()
     same_line_print(f"\nLOADING.")
-    dot_dot_dot(20)
+    dot_dot_dot(25)
 
 
 def quit_game():
@@ -298,33 +305,6 @@ def spinner(number_of_spins):
         sleep(.005)
 
 
-# def escape_key_interrupt_teletype(message):
-#     # Detect ESC immediately (no Enter needed).
-#
-#     fd = sys.stdin.fileno()
-#     old_settings = termios.tcgetattr(fd)
-#
-#     # Copy settings we can modify
-#     new_settings = termios.tcgetattr(fd)
-#     # Local flags: disable canonical mode (ICANON) and echo (ECHO)
-#     new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
-#     termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
-#
-#     try:
-#         dr, _, _ = select.select([sys.stdin], [], [], 0)
-#         if dr:
-#             ch = sys.stdin.read(1)
-#             if ch == '\x1b':  # ESC key
-#                 print("\033c", end="")  # clear screen
-#                 print()
-#                 print(message)
-#                 return True
-#     finally:
-#         # Always restore original terminal state
-#         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-#
-#     return False
-
 def escape_key_interrupt_teletype(message):
     # Detect ESC key without waiting for Enter. Works on Windows and POSIX.
 
@@ -338,7 +318,7 @@ def escape_key_interrupt_teletype(message):
                 return True
         return False
 
-    else:  # POSIX (OpenBSD, Linux, macOS)
+    else:  # POSIX (OpenBSD, Linux...)
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
 
@@ -429,8 +409,8 @@ def game_splash():
         cls()
         print_txt_file('splash_art.txt')
         print("                     "
-              "W  E  L  C  O  M  E    T O    S  A  U  E  N  G  A  R  D.")
-        print(f"                            Copyright 2022, 2023, by Jules Pitsker")
+              "W  E  L  C  O  M  E    T O    S  A  U  E  N  G  A  R  D")
+        print(f"                       Copyright 2022, 2023, 2025 by Jules Pitsker")
         choice = input(f"         "
                        f"(Quit) to Desktop  (A)bout  (T)ips  (C)redits  "
                        f"(L)icense  (M)ute/Unmute (B)egin ").lower()
@@ -488,42 +468,6 @@ def convert_list_to_string_with_and(list1):
     list1.insert(-1, 'and')
     readable_list = str(', '.join(list1[:-2]) + ' ' + ' '.join(list1[-2:]))
     return readable_list
-
-
-# def pause():
-#     """Wait for a single key press on Windows, Linux, macOS, or OpenBSD."""
-#     if os.name == 'nt':
-#         # Windows
-#         print("Press any key to continue . . . ", end='', flush=True)
-#         msvcrt.getch()
-#         print()
-#     else:
-#         # POSIX (Linux, macOS, OpenBSD)
-#         try:
-#             fd = sys.stdin.fileno()
-#             try:
-#                 termios.tcflush(fd, termios.TCIFLUSH)
-#             except OSError:
-#                 # stdin is not a terminal; ignore flush
-#                 pass
-#
-#             print("Press any key to continue . . . ", end='', flush=True)
-#             old_settings = termios.tcgetattr(fd)
-#             try:
-#                 tty.setraw(fd)
-#                 while True:
-#                     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-#                     if rlist:
-#                         sys.stdin.read(1)  # read a single character
-#                         break
-#             finally:
-#                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-#
-#             print()
-#
-#         except (OSError, termios.error):
-#             # Fallback for non-terminal stdin
-#             input("Press Enter to continue . . . ")
 
 
 def pause():
@@ -716,6 +660,61 @@ def character_generator():
     return player_1
 
 
+def get_save_path(filename: str) -> Path:
+    if getattr(sys, 'frozen', False):
+        # Running as compiled exe
+        base_path = Path(sys.executable).parent
+    else:
+        # Running as script
+        base_path = Path(__file__).parent
+    return base_path / filename
+
+
+def load_character(player_name: str):
+    # Attempts to load a saved Player object by name.
+    # Returns Player or None if not found / invalid.
+    load_a_character = player_name + ".sav"
+    p = get_save_path(load_a_character)
+
+    random_floppy_rw_sound()
+    sleep(2)
+
+    if not p.is_file():
+        print(f"Could not find {player_name}")
+        sleep(1.5)
+        return None
+
+    try:
+        with p.open('rb') as saved_player:
+            # Check for signature
+            signature = saved_player.readline().strip()
+            if signature != b"SAUENGARD_SAVE_V1":
+                print(f"Error: {player_name}.sav is not a valid save file (bad signature).")
+                sleep(1.5)
+                return None
+
+            same_line_print(f"{player_name} found")
+            player_1 = pickle.load(saved_player)
+
+    except (pickle.UnpicklingError, EOFError, AttributeError, ImportError, IndexError):
+        print(f"Error loading {player_name}: invalid or corrupted save file.")
+        sleep(1.5)
+        return None
+
+    # Validate object
+    if not hasattr(player_1, "name") or not hasattr(player_1, "hud"):
+        print(f"Error: {player_name}.sav is not a valid character file.")
+        sleep(1.5)
+        return None
+
+    dot_dot_dot(5)
+    same_line_print(f"{player_name} read.\n")
+    sleep(2)
+    player_1.loaded_game = True
+    sleep(1)
+    return player_1
+
+
 def game_start():
     # called from main loop
     while True:
@@ -741,41 +740,20 @@ def game_start():
 
             elif new_game_or_load == 'l':
                 player_name = input("Enter name of saved character: ")
-                load_a_character = player_name + ".sav"
-                p = Path(__file__).with_name(load_a_character)
-                random_floppy_rw_sound()
-                sleep(2)
-                if p.is_file():
-                    with p.open('rb') as saved_player:  # 'rb'
-                        same_line_print(f"{player_name} found")
-                        player_1 = pickle.load(saved_player)
-                        dot_dot_dot(5)
-                        same_line_print(f"{player_name} read.\n")
-                        sleep(2)
-                        # dungeon = dungeon_dict[player_1.dungeon_key]  # diagnostic - remove after testing
-                        # print(dungeon.name)  # diagnostic - remove after testing
-                        # print(player_1.coordinates)  # diagnostic - remove after testing
-                        player_1.loaded_game = True
-                        sleep(1)
-                        return player_1
-
+                player_1 = load_character(player_name)
+                if player_1 is not None:
+                    return player_1
                 else:
-                    print(f"Could not find {player_name} ")
-                    sleep(1.5)
                     continue
 
             elif new_game_or_load == 's':
                 accept_stats = ""
-
                 while accept_stats != 'y':
                     player_1 = character_generator()
                     player_1.hud()
-                    # print(f"Dungeon Key {player_1.dungeon_key}")
                     accept_stats = input(f"Accept character and continue? (y/N)? ").lower()
 
                 if accept_stats == "y":
-                    # player_1.dungeon_key = 1  # unneeded
-                    # player_1.dungeon = dungeon_dict[player_1.dungeon_key]  # should be unneeded
                     (player_1.x, player_1.y) = player_1.dungeon.staircase
                     player_1.position = 0
                     player_1.hud()
@@ -817,173 +795,6 @@ def augmentation_intro():
         f"                         *The maximum score for any attribute is 20*"
         f"\n")
     pause()
-
-
-# # ################# Cross-Platform Sound Stack: #########################
-#
-#
-# class SoundPlayer:
-#
-#     # Encapsulates asynchronous sound playback, looping, and mute/unmute.
-#     # Should Work on OpenBSD (aucat), Linux (aplay), and Windows (winsound).
-#
-#     def __init__(self):
-#         self._proc: subprocess.Popen | None = None
-#         self._loop_thread: threading.Thread | None = None
-#         self._stop_event = threading.Event()
-#         self._muted = False
-#         self._platform = platform.system()
-#         atexit.register(self.stop)
-#
-#     def _resolve_sound_path(self, sound_file: str) -> Path:
-#         # Return the full path to the sound file in ./sound directory.
-#         return Path(__file__).with_name("sound") / sound_file
-#
-#     def _get_player_cmd(self, path: Path) -> list[str] | None:
-#         # Return platform-appropriate command for subprocess playback, or None for Windows.
-#         if self._platform == "OpenBSD":
-#             return ["aucat", "-i", str(path)]
-#         elif self._platform == "Linux":
-#             return ["aplay", str(path)]
-#         elif self._platform == "Windows":
-#             return None  # handled by winsound
-#         else:
-#             raise RuntimeError(f"Unsupported platform for sound playback: {self._platform}")
-#
-#     def _launch_once(self, path: Path):
-#         # Play a sound file once asynchronously.
-#         if self._muted:
-#             return
-#
-#         if self._platform == "Windows":
-#             try:
-#                 winsound.PlaySound(str(path), winsound.SND_FILENAME | winsound.SND_ASYNC)
-#             except RuntimeError as e:
-#                 print(f"[sound] Windows playback error: {e}")
-#             return
-#
-#         cmd = self._get_player_cmd(path)
-#         try:
-#             self._proc = subprocess.Popen(
-#                 cmd,
-#                 stdout=subprocess.DEVNULL,
-#                 stderr=subprocess.DEVNULL,
-#                 close_fds=True,
-#                 start_new_session=True,  # Ctrl-C safe
-#             )
-#         except FileNotFoundError:
-#             print(f"[sound] Command '{cmd[0]}' not found. Install/enable it for your platform.")
-#         except OSError as e:
-#             print(f"[sound] Error starting playback: {e}")
-#
-#     def stop(self):
-#         # Stop any current or looping playback immediately.
-#         self._stop_event.set()
-#
-#         if self._platform == "Windows":
-#             try:
-#                 winsound.PlaySound(None, winsound.SND_PURGE)
-#             except RuntimeError:
-#                 pass
-#         else:
-#             if self._proc and self._proc.poll() is None:
-#                 try:
-#                     self._proc.terminate()
-#                 except OSError:
-#                     pass
-#             self._proc = None
-#
-#         # Wait for any loop thread to finish
-#         t = self._loop_thread
-#         if t and t.is_alive() and t is not threading.current_thread():
-#             t.join(timeout=1.0)
-#         self._loop_thread = None
-#
-#     def play(self, sound_file: str):
-#         # Play a sound file once asynchronously.
-#         if self._muted:
-#             return
-#         path = self._resolve_sound_path(sound_file)
-#         if not path.exists():
-#             print(f"[sound] {path} not found, skipping playback.")
-#             return
-#         self.stop()
-#         self._launch_once(path)
-#
-#     def loop(self, sound_file: str):
-#         """Play a sound file asynchronously in a continuous loop."""
-#         path = self._resolve_sound_path(sound_file)
-#         if not path.exists():
-#             print(f"[sound] {path} not found, skipping playback.")
-#             return
-#
-#         self.stop()
-#         self._stop_event.clear()
-#
-#         def loop_runner():
-#             while not self._stop_event.is_set() and not self._muted:
-#                 self._launch_once(path)
-#
-#                 if self._platform == "Windows":
-#                     # winsound loop handled separately
-#                     while not self._stop_event.is_set() and not self._muted:
-#                         threading.Event().wait(0.2)
-#                     self.stop()
-#                     break
-#                 else:
-#                     proc = self._proc
-#                     if proc is None:
-#                         break
-#                     while proc.poll() is None and not self._stop_event.is_set() and not self._muted:
-#                         try:
-#                             proc.wait(timeout=0.2)
-#                         except subprocess.TimeoutExpired:
-#                             pass
-#                         except KeyboardInterrupt:
-#                             self.stop()
-#                             raise
-#
-#         t = threading.Thread(target=loop_runner, daemon=True)
-#         self._loop_thread = t
-#         t.start()
-#
-#     # --- Mute control ---
-#     def mute(self):
-#         # Mute playback immediately without losing loop state.
-#         self._muted = True
-#         self.stop()
-#
-#     def unmute(self):
-#         # Unmute: future playback works normally.
-#         self._muted = False
-#
-#     @property
-#     def muted(self) -> bool:
-#         # Public read-only property for mute state.
-#         return self._muted
-#
-#
-# # --- Module-level drop-in API ---
-# _player = SoundPlayer()
-# stop_sound = _player.stop
-# sound_player = _player.play
-# sound_player_loop = _player.loop
-# mute_sound = _player.mute
-# unmute_sound = _player.unmute
-#
-#
-# # --- Convenience toggle ---
-# def toggle_mute():
-#     # Toggle mute/unmute. Returns True if muted, False if unmuted.
-#     if _player.muted:
-#         _player.unmute()
-#         return False
-#     else:
-#         _player.mute()
-#         return True
-#
-#
-# # ######################END SOUND STACK############################
 
 
 # ################# Cross-Platform Sound Stack: #########################
@@ -1149,10 +960,10 @@ def toggle_mute():
         _player.mute()
         return True
 
-# ###################### END SOUND STAC K############################
+# ###################### END SOUND STACK ############################
 
 
-# ######################.wav file playback#########################
+# ###################### .wav file playback #########################
 def gong():
     # notice the gong is not looped!
     sound_player('gong.wav')
@@ -2276,33 +2087,59 @@ class Player:
                 cls()
                 sys.exit()'''
 
+    # def save_character(self):
+    #     save_a_character = self.name + ".sav"
+    #     p = get_save_path(save_a_character)
+    #
+    #     if p.is_file():
+    #         while True:
+    #             self.hud()
+    #             confirm_save = input(f"{self.name} already saved. Overwrite? (y/n)? ").lower()
+    #             if confirm_save == 'n':
+    #                 return
+    #             elif confirm_save == 'y':
+    #                 break
+    #
+    #     same_line_print(f"Saving {self.name}")
+    #     random_floppy_rw_sound()
+    #     dot_dot_dot(15)
+    #
+    #     with p.open('wb') as character_filename:
+    #         # Write a game-specific signature first
+    #         character_filename.write(b"SAUENGARD_SAVE_V1\n")
+    #         pickle.dump(self, character_filename)
+    #
+    #         same_line_print(f"{self.name} saved.\n")
+    #         sleep(2)
+    #
+    #     tavern_theme()
+    #     return
+
     def save_character(self):
-        # called from self.town_navigation()
         save_a_character = self.name + ".sav"
-        p = Path(__file__).with_name(save_a_character)
+        p = get_save_path(save_a_character)
 
         if p.is_file():
-
             while True:
                 self.hud()
                 confirm_save = input(f"{self.name} already saved. Overwrite? (y/n)? ").lower()
-
                 if confirm_save == 'n':
                     return
-
                 elif confirm_save == 'y':
                     break
 
         same_line_print(f"Saving {self.name}")
         random_floppy_rw_sound()
         dot_dot_dot(15)
-        with p.open('wb') as character_filename:  # 'wb'
-            # noinspection PyTypeChecker
+
+        with p.open('wb') as character_filename:
+            # Write a game-specific signature first
+            character_filename.write(b"SAUENGARD_SAVE_V1\n")
             pickle.dump(self, character_filename)
-            same_line_print(f"{self.name} saved.\n")
-            sleep(2)
+
+        same_line_print(f"{self.name} saved.\n")
+        sleep(2)
         tavern_theme()
-        # town_theme()
         return
 
     def hud(self):

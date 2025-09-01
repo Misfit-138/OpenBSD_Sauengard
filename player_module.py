@@ -2135,6 +2135,7 @@ class Player:
         with p.open('wb') as character_filename:
             # Write a game-specific signature first
             character_filename.write(b"SAUENGARD_SAVE_V1\n")
+            # noinspection PyTypeChecker
             pickle.dump(self, character_filename)
 
         same_line_print(f"{self.name} saved.\n")

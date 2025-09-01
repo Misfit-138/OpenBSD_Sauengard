@@ -2087,33 +2087,6 @@ class Player:
                 cls()
                 sys.exit()'''
 
-    # def save_character(self):
-    #     save_a_character = self.name + ".sav"
-    #     p = get_save_path(save_a_character)
-    #
-    #     if p.is_file():
-    #         while True:
-    #             self.hud()
-    #             confirm_save = input(f"{self.name} already saved. Overwrite? (y/n)? ").lower()
-    #             if confirm_save == 'n':
-    #                 return
-    #             elif confirm_save == 'y':
-    #                 break
-    #
-    #     same_line_print(f"Saving {self.name}")
-    #     random_floppy_rw_sound()
-    #     dot_dot_dot(15)
-    #
-    #     with p.open('wb') as character_filename:
-    #         # Write a game-specific signature first
-    #         character_filename.write(b"SAUENGARD_SAVE_V1\n")
-    #         pickle.dump(self, character_filename)
-    #
-    #         same_line_print(f"{self.name} saved.\n")
-    #         sleep(2)
-    #
-    #     tavern_theme()
-    #     return
 
     def save_character(self):
         save_a_character = self.name + ".sav"

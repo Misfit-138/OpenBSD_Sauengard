@@ -2087,7 +2087,6 @@ class Player:
                 cls()
                 sys.exit()'''
 
-
     def save_character(self):
         save_a_character = self.name + ".sav"
         p = get_save_path(save_a_character)

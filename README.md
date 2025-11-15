@@ -32,7 +32,7 @@ license, and the game should now be fully cross-compatible on:
 - **Windows**: built-in `winsound` (no extra install needed)
 - Git
 - Git LFS
-- Python 3 (included by default in OpenBSD 7.7)
+- Python 3 (included by default in OpenBSD)
 
 ---
 

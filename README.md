@@ -73,7 +73,11 @@ $ python3 main.py
 
 ## Issues?
 Please contact me at: 
-misfit138x at proton.me
+misfit138x 
+
+[at] 
+
+proton.me
 
 ## License
 

@@ -21,6 +21,7 @@ license, and the game should now be fully cross-compatible on:
 * GNU/Linux
 * Windows
 * FreeBSD needs testing, as I do not have any machines running it.
+* Android mobile implementation of Debian within the terminal app.
 * Please email me with any issues.
 ---
 

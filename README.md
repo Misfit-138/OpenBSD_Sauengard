@@ -28,7 +28,7 @@ license, and the game should now be fully cross-compatible on:
 
 - **OpenBSD**: `aucat` (base system, already installed)
 - **FreeBSD**: `wavplay` (preferred) or `play` (SoX package)
-- **Linux**: `aplay` (ALSA utils package)
+- **Linux (including android mobile implementation of debian through terminal)**: `aplay` (`alsa-utils` package)
 - **Windows**: built-in `winsound` (no extra install needed)
 - Git
 - Git LFS
